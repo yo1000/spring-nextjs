@@ -1,0 +1,55 @@
+services:
+  app-server:
+    build:
+      context: ./spring-nextjs-server
+      args:
+        JAR: ./target/spring-nextjs-server-*.jar
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/spring_nextjs
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_DEFERDATASOURCEINITIALIZATION: true
+      SPRING_JPA_HIBERNATE_DDLAUTO: create
+      SPRING_JPA_SHOWSQL: false
+      SPRING_SQL_INIT_MODE: always # develop only
+
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: spring_nextjs
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./src/main/resources/sql:/docker-entrypoint-initdb.d
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.0
+    ports:
+      - "8000:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HEALTH_ENABLED: true
+    command:
+      - start-dev
+
+  keycloak-setup:
+    image: everpeace/curl-jq
+    healthcheck:
+      test: test -e /tmp/READY || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 15
+    environment:
+      KEYCLOAK_URL_BASE: http://keycloak:8080
+      KEYCLOAK_REALM: master
+      KEYCLOAK_CLIENT_ID: spring-nextjs
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak-setup.sh:/tmp/keycloak-setup.sh
+      - ./src/main/resources/frontend/.env.development:/tmp/.env
+    entrypoint: /bin/sh -c "/tmp/keycloak-setup.sh"

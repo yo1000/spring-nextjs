@@ -1,0 +1,189 @@
+#!/bin/bash
+
+KEEP_ENV=$(cat /tmp/.env | grep -v 'READY=')
+echo "${KEEP_ENV}" > /tmp/.env
+
+KEYCLOAK_URL_BASE=${KEYCLOAK_URL_BASE:-"http://localhost:8080"}
+KEYCLOAK_REALM=${KEYCLOAK_REALM:-"master"}
+KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-"spring-nextjs"}
+KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-"admin"}
+KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-"admin"}
+
+RETRY_SEC=1
+RETRY_SEC_MAX=300
+while [[ -z "$(curl -sI ${KEYCLOAK_URL_BASE}/health | head -n1 | grep 200)" ]]; do
+  if [[ $RETRY_SEC -gt $RETRY_SEC_MAX ]]; then
+    echo "Timeout: ${RETRY_SEC} > ${RETRY_SEC_MAX}"
+    exit 1
+  fi
+
+  echo "Sleep: ${RETRY_SEC}"
+  sleep $RETRY_SEC
+  RETRY_SEC=$(expr $RETRY_SEC + $RETRY_SEC)
+done
+
+# Authenticate
+KC_ACCESS_TOKEN=$(
+curl -s \
+  -d "client_id=admin-cli" \
+  -d "username=${KEYCLOAK_ADMIN}" \
+  -d "password=${KEYCLOAK_ADMIN_PASSWORD}" \
+  -d "grant_type=password" \
+  "${KEYCLOAK_URL_BASE}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token" \
+  | jq -r ".access_token" \
+)
+
+# Create client and get client-secret ** but UI is not required secret because by "public" client.
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"clientId\": \"${KEYCLOAK_CLIENT_ID}\",
+    \"implicitFlowEnabled\": true,
+    \"publicClient\": true,
+    \"redirectUris\": [\"*\"],
+    \"webOrigins\": [\"*\"]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients" \
+
+KC_CLIENT_RESP=$(
+curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients?clientId=${KEYCLOAK_CLIENT_ID}" \
+)
+
+KC_CLIENT_ID=$(
+echo "${KC_CLIENT_RESP}" \
+  | jq -r '.[0].id' \
+)
+
+KC_CLIENT_SECRET=$(
+echo "${KC_CLIENT_RESP}" \
+  | jq -r '.[0].secret' \
+)
+
+# Re-Authenticate
+KC_ACCESS_TOKEN=$(
+curl -s \
+  -d "client_id=admin-cli" \
+  -d "username=${KEYCLOAK_ADMIN}" \
+  -d "password=${KEYCLOAK_ADMIN_PASSWORD}" \
+  -d "grant_type=password" \
+  "${KEYCLOAK_URL_BASE}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token" \
+  | jq -r ".access_token" \
+)
+
+# Create user
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"alice\",
+    \"email\": \"alice@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Alice\",
+    \"lastName\": \"Un\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Alice-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+KC_USER_ID=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=alice" \
+  | jq -r '.[0].id' \
+)
+
+KC_ADMIN_ROLE_JSON=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/realm/available?first=0&max=11" \
+  | jq -r '.[] | select(.name == "admin")' \
+)
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[${KC_ADMIN_ROLE_JSON}]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/realm" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"bob\",
+    \"email\": \"bob@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Bob\",
+    \"lastName\": \"Deux\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Bob-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"carol\",
+    \"email\": \"carol@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Carol\",
+    \"lastName\": \"Trois\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Carol-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"dave\",
+    \"email\": \"dave@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Dave\",
+    \"lastName\": \"Quatre\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Dave-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+echo "User created
+
+| Username | Password    | Role  | Email            |
+|----------|-------------|-------|------------------|
+| alice    | Alice-1234  | admin | alice@localhost  |
+| bob      | Bob-1234    |       | bob@localhost    |
+| carol    | Carol-1234  |       | carol@localhost  |
+| dave     | Dave-1234   |       | dave@localhost   |
+"
+
+while :; do sleep 10; done
