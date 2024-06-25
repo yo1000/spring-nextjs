@@ -17,7 +17,16 @@ public class ApplicationProperties {
     }
 
     public static class SecurityProperties {
+        private String idp;
         private CorsProperties cors;
+
+        public String getIdp() {
+            return idp;
+        }
+
+        public void setIdp(String idp) {
+            this.idp = idp;
+        }
 
         public CorsProperties getCors() {
             return cors;

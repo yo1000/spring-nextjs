@@ -1,5 +1,6 @@
 package com.yo1000.springnextjs.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,33 +43,6 @@ public class SecurityConfig {
             HttpSecurity httpSecurity
     ) throws Exception {
         httpSecurity
-//                .authorizeHttpRequests(registry -> {
-////                    Optional.ofNullable(props.requests).orElse(Collections.emptyList()).forEach(request -> {
-////                        List<HttpMethod> methods = Optional.ofNullable(request.methods)
-////                                .orElse(Collections.emptyList()).stream()
-////                                .map(m -> HttpMethod.valueOf(m.toUpperCase()))
-////                                .toList();
-////
-////                        final List<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizedUrl> authorizedUrls;
-////                        if (methods.isEmpty()) {
-////                            authorizedUrls = Collections.singletonList(registry.requestMatchers(request.uri));
-////                        } else {
-////                            authorizedUrls = methods.stream().map(m -> registry.requestMatchers(m, request.uri)).toList();
-////                        }
-////
-////                        final List<String> authorities = Optional.ofNullable(request.authorities)
-////                                .orElse(Collections.emptyList());
-////                        authorizedUrls.forEach(authorizedUrl -> {
-////                            if (authorities.isEmpty()) {
-////                                authorizedUrl.authenticated();
-////                            } else {
-////                                authorizedUrl.hasAnyAuthority(authorities.toArray(new String[0]));
-////                            }
-////                        });
-////                    });
-//
-//                    registry.anyRequest().permitAll();
-//                })
                 .oauth2ResourceServer(config -> config.jwt(Customizer.withDefaults()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults());
@@ -102,7 +76,7 @@ public class SecurityConfig {
 
     // for Keycloak
     @Bean
-//    @ConditionalOnProperty(name = "app.security.idp", havingValue = "keycloak")
+    @ConditionalOnProperty(name = "app.security.idp", havingValue = "keycloak")
     public JwtAuthenticationConverter keycloakJwtAuthenticationConverter() {
         Converter<Jwt, Collection<GrantedAuthority>> converter = source -> {
             Map<String, Object> realmAccess = source.getClaimAsMap("realm_access");

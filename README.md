@@ -52,6 +52,7 @@ Run API server module for development
 -Dspring.jpa.hibernate.ddl-auto=create
 -Dspring.sql.init.mode=always
 -Dspring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
+-Dapp.security.idp=keycloak
 -Dapp.security.cors.allowed-origins=http://localhost:3000
 "
 ```
