@@ -1,20 +1,21 @@
 services:
-  app-server:
-    build:
-      context: ./spring-nextjs-server
-      args:
-        JAR: ./target/spring-nextjs-server-*.jar
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/spring_nextjs
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_JPA_DEFERDATASOURCEINITIALIZATION: true
-      SPRING_JPA_HIBERNATE_DDLAUTO: create
-      SPRING_JPA_SHOWSQL: false
-      SPRING_SQL_INIT_MODE: always # develop only
-
+  #app-server:
+  #  build:
+  #    context: ./spring-nextjs-server
+  #    args:
+  #      JAR: ./target/spring-nextjs-server-*.jar
+  #  ports:
+  #    - "8080:8080"
+  #  environment:
+  #    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/spring_nextjs
+  #    SPRING_DATASOURCE_USERNAME: postgres
+  #    SPRING_DATASOURCE_PASSWORD: postgres
+  #    SPRING_JPA_DEFERDATASOURCEINITIALIZATION: true
+  #    SPRING_JPA_HIBERNATE_DDLAUTO: create
+  #    SPRING_JPA_SHOWSQL: false
+  #    SPRING_SQL_INIT_MODE: always # develop only
+  #    SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://localhost:8000/realms/master"
+  #    APP_SECURITY_CORS_ALLOWEDORIGINS: "http://localhost:3000"
   postgres:
     image: postgres
     ports:

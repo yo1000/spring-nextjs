@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ItemRepository {
     Optional<Item> findById(Integer id);
     Page<Item> findAll(Pageable pageable);
+    Page<Item> findAllByNameStartingWith(String name, Pageable pageable);
 }

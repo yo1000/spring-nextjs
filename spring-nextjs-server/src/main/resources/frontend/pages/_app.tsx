@@ -2,8 +2,8 @@ import {AppProps} from 'next/app';
 import {AuthProvider} from '@/context/AuthContext';
 import {useEffect, useState} from "react";
 import {UserManagerSettings, WebStorageStateStore} from "oidc-client-ts";
-import Layout from "@/components/Layout.jsx";
 import "../styles/globals.css";
+import Layout from "@/components/Layout";
 
 function App({Component, pageProps}: AppProps) {
     const [oidcConfig, setOidcConfig] = useState<UserManagerSettings | null>(null);
@@ -25,6 +25,8 @@ function App({Component, pageProps}: AppProps) {
                     response_type: "code",
                     scope: "openid profile email",
                     userStore: new WebStorageStateStore({store: window.localStorage}),
+                    // loadUserInfo: true,
+                    accessTokenExpiringNotificationTimeInSeconds: 30,
                 });
             } catch (e) {
                 console.info(e);
@@ -37,6 +39,8 @@ function App({Component, pageProps}: AppProps) {
                     response_type: "code",
                     scope: "openid profile email",
                     userStore: new WebStorageStateStore({store: window.localStorage}),
+                    // loadUserInfo: true,
+                    accessTokenExpiringNotificationTimeInSeconds: 30,
                 });
             }
         };

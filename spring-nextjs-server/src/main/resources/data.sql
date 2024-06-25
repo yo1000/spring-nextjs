@@ -201,6 +201,13 @@ INSERT INTO item("id", "name", "price", "sell_price") VALUES(197, 'Occult Fan II
 INSERT INTO item("id", "name", "price", "sell_price") VALUES(198, 'Occult Fan IV', null, 20000);
 
 
+-- item_inventory
+
+INSERT INTO item_inventory("id", "item_id", "quantity") VALUES(1, 1, 20);
+INSERT INTO item_inventory("id", "item_id", "quantity") VALUES(2, 3, 20);
+INSERT INTO item_inventory("id", "item_id", "quantity") VALUES(3, 7, 10);
+
+
 -- weapon
 
 INSERT INTO weapon("id", "name", "str", "hit") VALUES(0, 'Revolver', 11, 255);
@@ -452,7 +459,6 @@ INSERT INTO weapon_remodel_materials("materials_id", "weapon_remodel_id") VALUES
 INSERT INTO weapon_remodel_materials("materials_id", "weapon_remodel_id") VALUES(25, 10);
 INSERT INTO weapon_remodel_materials("materials_id", "weapon_remodel_id") VALUES(26, 10);
 INSERT INTO weapon_remodel_materials("materials_id", "weapon_remodel_id") VALUES(27, 10);
-
 
 -- Irvine - Valiant
 INSERT INTO weapon_remodel_materials("materials_id", "weapon_remodel_id") VALUES(28, 11);

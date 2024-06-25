@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.0",
+    "@heroicons/react": "^2.1.4",
     "next": "14.2.4",
     "oidc-client-ts": "^3.0.1",
     "react": "^18",

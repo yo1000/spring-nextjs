@@ -28,7 +28,35 @@ Build server module for development
 ./mvnw clean package
 ```
 
-Build frontend module for development
+
+How to run
+--------------------------------------------------------------------------------
+
+Run dependency servers
+
+```bash
+docker compose up
+```
+
+Run API server module for development
+
+```bash
+./mvnw clean spring-boot:run \
+-pl spring-nextjs-server \
+-Dspring-boot.run.jvmArguments="
+-Dspring.datasource.url=jdbc:postgresql://localhost:5432/spring_nextjs
+-Dspring.datasource.username=postgres
+-Dspring.datasource.password=postgres
+-Dspring.jpa.defer-datasource-initialization=true
+-Dspring.jpa.show-sql=false
+-Dspring.jpa.hibernate.ddl-auto=create
+-Dspring.sql.init.mode=always
+-Dspring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
+-Dapp.security.cors.allowed-origins=http://localhost:3000
+"
+```
+
+Run frontend module for development
 
 ```bash
 (cd spring-nextjs-server/src/main/resources/frontend/; \

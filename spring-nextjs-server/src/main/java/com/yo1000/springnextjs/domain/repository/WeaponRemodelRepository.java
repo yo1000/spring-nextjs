@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface WeaponRemodelRepository {
     Optional<WeaponRemodel> findById(Integer id);
     Page<WeaponRemodel> findAll(Pageable pageable);
+    Page<WeaponRemodel> findAllByWeaponNameStartingWith(String weaponName, Pageable pageable);
 }

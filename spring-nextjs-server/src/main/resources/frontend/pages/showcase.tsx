@@ -1,11 +1,11 @@
 import Content from "@/components/Content";
 
-const Index = () => {
+const Showcase = () => {
     return (
-        <Content title={`Index`}>
+        <Content title={`Showcase`}>
             <></>
         </Content>
     );
 }
 
-export default Index;
+export default Showcase;

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/itemInventories")
 public class ItemInventoryRestController {
@@ -16,8 +18,16 @@ public class ItemInventoryRestController {
     }
 
     @GetMapping
-    public Page<ItemInventory> get(Pageable pageable) {
-        return itemInventoryApplicationService.list(pageable);
+    public Page<ItemInventory> get(
+            @RequestParam(value = "itemName", required = false)
+            String itemName,
+            Pageable pageable
+    ) {
+        return Optional.ofNullable(itemName).stream()
+                .filter(s -> !s.isBlank())
+                .findAny()
+                .map(s -> itemInventoryApplicationService.search(s, pageable))
+                .orElseGet(() -> itemInventoryApplicationService.list(pageable));
     }
 
     @PostMapping

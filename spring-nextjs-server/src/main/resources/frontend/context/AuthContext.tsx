@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { UserManager, User, WebStorageStateStore } from 'oidc-client-ts';
+import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import {User, UserManager} from 'oidc-client-ts';
 
 type AuthContextType = {
     user: User | null;

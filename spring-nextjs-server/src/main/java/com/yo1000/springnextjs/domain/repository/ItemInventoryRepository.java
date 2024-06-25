@@ -12,4 +12,5 @@ public interface ItemInventoryRepository {
     ItemInventory save(ItemInventory itemInventory);
 
     Optional<ItemInventory> findByItemId(Integer id);
+    Page<ItemInventory> findAllByItemNameStartingWith(String name, Pageable pageable);
 }

@@ -65,6 +65,163 @@ echo "${KC_CLIENT_RESP}" \
   | jq -r '.[0].secret' \
 )
 
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"item:read\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"item:write\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"itemInventory:read\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"itemInventory:write\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"weapon:read\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"weapon:write\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"weaponRemodel:read\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"weaponRemodel:write\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+KC_CLIENT_ROLE_ID=$(
+echo "${KC_CLIENT_RESP}" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_ITEM_READ=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/item:read" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_ITEM_WRITE=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/item:write" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_ITEMINVENTORY_READ=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/itemInventory:read" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_ITEMINVENTORY_WRITE=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/itemInventory:write" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_WEAPON_READ=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/weapon:read" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_WEAPON_WRITE=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/weapon:write" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_WEAPONREMODEL_READ=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/weaponRemodel:read" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_WEAPONREMODEL_WRITE=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/weaponRemodel:write" \
+  | jq -r '.id' \
+)
+
 # Re-Authenticate
 KC_ACCESS_TOKEN=$(
 curl -s \
@@ -76,7 +233,7 @@ curl -s \
   | jq -r ".access_token" \
 )
 
-# Create user
+# Create user - alice
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
@@ -104,21 +261,77 @@ KC_USER_ID=$(curl -s \
   | jq -r '.[0].id' \
 )
 
-KC_ADMIN_ROLE_JSON=$(curl -s \
-  -X GET \
-  -H "Content-Type: application/json" \
-  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
-  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/realm/available?first=0&max=11" \
-  | jq -r '.[] | select(.name == "admin")' \
-)
+#KC_ADMIN_ROLE_JSON=$(curl -s \
+#  -X GET \
+#  -H "Content-Type: application/json" \
+#  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+#  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/realm/available?first=0&max=11" \
+#  | jq -r '.[] | select(.name == "admin")' \
+#)
+
+#curl -s \
+#  -X POST \
+#  -H "Content-Type: application/json" \
+#  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+#  -d "[${KC_ADMIN_ROLE_JSON}]" \
+#  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/realm" \
 
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
-  -d "[${KC_ADMIN_ROLE_JSON}]" \
-  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/realm" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_ITEM_WRITE}\",
+    \"name\":\"item:write\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
 
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_ITEMINVENTORY_WRITE}\",
+    \"name\":\"itemInventory:write\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_WEAPON_WRITE}\",
+    \"name\":\"weapon:write\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_WEAPONREMODEL_WRITE}\",
+    \"name\":\"weaponRemodel:write\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+# Re-Authenticate
+KC_ACCESS_TOKEN=$(
+curl -s \
+  -d "client_id=admin-cli" \
+  -d "username=${KEYCLOAK_ADMIN}" \
+  -d "password=${KEYCLOAK_ADMIN_PASSWORD}" \
+  -d "grant_type=password" \
+  "${KEYCLOAK_URL_BASE}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token" \
+  | jq -r ".access_token" \
+)
+
+# Create user - bob
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
@@ -138,6 +351,59 @@ curl -s \
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
 
+KC_USER_ID=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=bob" \
+  | jq -r '.[0].id' \
+)
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_ITEM_READ}\",
+    \"name\":\"item:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_ITEMINVENTORY_READ}\",
+    \"name\":\"itemInventory:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_WEAPON_READ}\",
+    \"name\":\"weapon:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_WEAPONREMODEL_READ}\",
+    \"name\":\"weaponRemodel:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+# Create user - carol
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
@@ -157,6 +423,7 @@ curl -s \
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
 
+# Create user - dave
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
@@ -178,12 +445,12 @@ curl -s \
 
 echo "User created
 
-| Username | Password    | Role  | Email            |
-|----------|-------------|-------|------------------|
-| alice    | Alice-1234  | admin | alice@localhost  |
-| bob      | Bob-1234    |       | bob@localhost    |
-| carol    | Carol-1234  |       | carol@localhost  |
-| dave     | Dave-1234   |       | dave@localhost   |
+| Username | Password    | Email            | Role                                                               |
+|----------|-------------|------------------|--------------------------------------------------------------------|
+| alice    | Alice-1234  | alice@localhost  | item:write, itemInventory:write, weapon:write, weaponRemodel:write |
+| bob      | Bob-1234    | bob@localhost    | item:read , itemInventory:read , weapon:read , weaponRemodel:read  |
+| carol    | Carol-1234  | carol@localhost  |                                                                    |
+| dave     | Dave-1234   | dave@localhost   |                                                                    |
 "
 
 while :; do sleep 10; done
