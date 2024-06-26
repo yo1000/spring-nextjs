@@ -133,7 +133,7 @@ export default function Table<T>({data, searchLabel = "Keyword", onSearch, onAdd
                         </div>
                     </div>
                 </div>
-                {data
+                {data && data.content
                     ? (<Paginator empty={data.empty}
                                   first={data.first}
                                   last={data.last}
