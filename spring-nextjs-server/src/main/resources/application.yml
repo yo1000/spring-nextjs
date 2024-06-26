@@ -10,3 +10,19 @@ spring:
       resourceserver:
         jwt:
           issuer-uri:
+
+  web:
+    resources:
+      static-locations:
+        - "classpath:/META-INF/resources/"
+        - "classpath:/resources/"
+        - "classpath:/frontend/out/"
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10

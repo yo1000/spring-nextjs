@@ -6,18 +6,6 @@ import {useAuth} from "@/context/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
 
-const navigation = [
-    { name: 'Showcase', href: '/showcase/', protected: false },
-    { name: 'Items', href: '/items/', protected: true },
-    { name: 'Item Inventories', href: '/itemInventories/', protected: true },
-    { name: 'Weapons', href: '/weapons/', protected: true },
-    { name: 'Weapon Remodels', href: '/weaponRemodels/', protected: true },
-];
-
-function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
-}
-
 type LayoutProps = {
     children: ReactNode;
 };
@@ -27,6 +15,18 @@ export default function Layout({ children }: LayoutProps) {
 
     const router = useRouter();
     const [pathname, setPathname] = useState('');
+
+    const navigation = [
+        { name: 'Showcase', href: `/showcase/`, protected: false },
+        { name: 'Items', href: `/items/`, protected: true },
+        { name: 'Item Inventories', href: `/itemInventories/`, protected: true },
+        { name: 'Weapons', href: `/weapons/`, protected: true },
+        { name: 'Weapon Remodels', href: `/weaponRemodels/`, protected: true },
+    ];
+
+    function classNames(...classes: string[]) {
+        return classes.filter(Boolean).join(' ')
+    }
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -49,7 +49,7 @@ export default function Layout({ children }: LayoutProps) {
                                                     className="h-fit w-fit text-white"
                                                     width={56}
                                                     height={28}
-                                                    src="/logo.svg"
+                                                    src={`${router.basePath}/logo.svg`}
                                                     alt="Showcase logo"
                                                 />
                                             </Link>
@@ -57,25 +57,23 @@ export default function Layout({ children }: LayoutProps) {
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
                                                 {navigation.map((item) => (
-                                                    <a
-                                                        key={item.name}
-                                                        href={item.href}
-                                                        className={classNames(
-                                                            item.href === pathname
-                                                                ? 'bg-gray-900 text-white'
-                                                                : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                                        )}
-                                                        aria-current={item.href === pathname ? 'page' : undefined}
-                                                    >
+                                                    <Link key={item.name}
+                                                          href={item.href}
+                                                          className={classNames(
+                                                              item.href === pathname
+                                                                  ? 'bg-gray-900 text-white'
+                                                                  : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                                                              'rounded-md px-3 py-2 text-sm font-medium',
+                                                          )}
+                                                          aria-current={item.href === pathname ? 'page' : undefined}>
                                                         {item.name}{item.protected ? (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
-                                                                 fill="currentColor" className="inline ml-0.5 pb-0.5 size-4">
-                                                                <path fillRule="evenodd"
-                                                                      d="M8 1a3.5 3.5 0 0 0-3.5 3.5V7A1.5 1.5 0 0 0 3 8.5v5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 11.5 7V4.5A3.5 3.5 0 0 0 8 1Zm2 6V4.5a2 2 0 1 0-4 0V7h4Z" clipRule="evenodd" />
-                                                            </svg>
-                                                        ) : (<></>)}
-                                                    </a>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"
+                                                             fill="currentColor" className="inline ml-0.5 pb-0.5 size-4">
+                                                            <path fillRule="evenodd"
+                                                                  d="M8 1a3.5 3.5 0 0 0-3.5 3.5V7A1.5 1.5 0 0 0 3 8.5v5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 11.5 7V4.5A3.5 3.5 0 0 0 8 1Zm2 6V4.5a2 2 0 1 0-4 0V7h4Z" clipRule="evenodd" />
+                                                        </svg>
+                                                    ) : (<></>)}
+                                                    </Link>
                                                 ))}
                                             </div>
                                         </div>

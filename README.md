@@ -8,6 +8,7 @@ Requirements
 --------------------------------------------------------------------------------
 
 - Java 21
+- Node.js 22
 - Docker
 
 
@@ -29,16 +30,16 @@ Build server module for development
 ```
 
 
-How to run
+How to start for development
 --------------------------------------------------------------------------------
 
-Run dependency servers
+Start dependency servers
 
 ```bash
 docker compose up
 ```
 
-Run API server module for development
+Start API server module
 
 ```bash
 ./mvnw clean spring-boot:run \
@@ -54,10 +55,14 @@ Run API server module for development
 -Dspring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
 -Dapp.security.idp=keycloak
 -Dapp.security.cors.allowed-origins=http://localhost:3000
+-Dapp.frontend.oidc.authority=http://localhost:8000/realms/master
+-Dapp.frontend.oidc.client-id=spring-nextjs
+-Dapp.frontend.oidc.redirect-uri=http://localhost:8080
+-Dapp.frontend.oidc.post-logout-redirect-uri=http://localhost:8080
 "
 ```
 
-Run frontend module for development
+Start frontend module
 
 ```bash
 (cd spring-nextjs-server/src/main/resources/frontend/; \
