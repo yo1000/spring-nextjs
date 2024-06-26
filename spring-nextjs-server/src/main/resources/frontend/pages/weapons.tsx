@@ -1,15 +1,11 @@
 import {useEffect, useState} from "react";
 import Content from "@/components/Content";
-import Table from "@/components/Table";
+import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/context/AuthContext";
-
-type PagedData = {
-    content: any[];
-};
 
 const Weapons = () => {
     const {user} = useAuth();
-    const [weapons, setWeapons] = useState<PagedData | null>();
+    const [weapons, setWeapons] = useState<PagedData<any> | null>();
 
     useEffect(() => {
         if (!user?.access_token) {
@@ -44,6 +40,7 @@ const Weapons = () => {
         <Content title={`Weapons`}>
             <Table
                 data={weapons}
+                searchLabel={`Name`}
                 onSearch={async (v) => {
                     const resp = await fetch(`http://localhost:8080/weapons?name=${encodeURIComponent(v)}`, {
                         method: `GET`,
@@ -59,7 +56,24 @@ const Weapons = () => {
                     } else {
                         console.error(resp.status);
                     }
-                }}/>
+                }}
+                onClickPage={async (keyword, page) => {
+                    const resp = await fetch(`http://localhost:8080/weapons?name=${encodeURIComponent(keyword)}&page=${page}`, {
+                        method: `GET`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${user?.access_token}`,
+                        },
+                        body: null,
+                    });
+
+                    if (resp.ok) {
+                        setWeapons(await resp.json());
+                    } else {
+                        console.error(resp.status);
+                    }
+                }}
+            />
         </Content>
     );
 }

@@ -1,23 +1,25 @@
 import {useEffect, useState} from "react";
 import Content from "@/components/Content";
-import Table from "@/components/Table";
+import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/context/AuthContext";
 
 type WeaponRemodel = {
     id: number;
-    name: string;
     price: number;
     weapon: any;
     materials: any[];
 };
 
-type PagedData = {
-    content: WeaponRemodel[];
+type WeaponRemodelData = {
+    id: number;
+    name: string;
+    price: number;
+    materials: string[];
 };
 
 const WeaponRemodels = () => {
     const {user} = useAuth();
-    const [weaponRemodels, setWeaponRemodels] = useState<PagedData | null>();
+    const [weaponRemodels, setWeaponRemodels] = useState<PagedData<WeaponRemodel> | null>();
 
     useEffect(() => {
         if (!user?.access_token) {
@@ -59,9 +61,26 @@ const WeaponRemodels = () => {
                         price: datum.price,
                         materials: datum.materials?.map(material => `${material.item.name}: ${material.quantity}`).join(", "),
                     }))
-                }}
+                } as PagedData<WeaponRemodelData>}
+                searchLabel={`Name`}
                 onSearch={async (v) => {
                     const resp = await fetch(`http://localhost:8080/weaponRemodels?weaponName=${encodeURIComponent(v)}`, {
+                        method: `GET`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${user?.access_token}`,
+                        },
+                        body: null,
+                    });
+
+                    if (resp.ok) {
+                        setWeaponRemodels(await resp.json());
+                    } else {
+                        console.error(resp.status);
+                    }
+                }}
+                onClickPage={async (keyword, page) => {
+                    const resp = await fetch(`http://localhost:8080/weaponRemodels?weaponName=${encodeURIComponent(keyword)}&page=${page}`, {
                         method: `GET`,
                         headers: {
                             "Content-Type": "application/json",

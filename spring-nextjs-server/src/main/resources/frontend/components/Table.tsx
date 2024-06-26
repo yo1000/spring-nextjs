@@ -1,19 +1,29 @@
 import {useState} from "react";
+import Paginator from "@/components/Paginator";
 
-type PagedData = {
-    content: any[] | null | undefined;
+export type PagedData<T> = {
+    content: T[] | null | undefined;
+    empty: boolean;
+    first: boolean;
+    last: boolean;
+    number: number;
+    numberOfElements: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
 };
 
-type TableProps = {
-    data: PagedData | null | undefined;
+type TableProps<T> = {
+    data: PagedData<T> | null | undefined;
     searchLabel?: string;
     onSearch: (keyword: string) => void;
     onAdd?: () => void;
-    onEdit?: (data: any) => void;
+    onEdit?: (data: T) => void;
+    onClickPage: (keyword: string, page: number) => void;
 };
 
-export default function Table({data, searchLabel = "Keyword", onSearch, onAdd, onEdit}: TableProps) {
-    const keys: string[] = data?.content?.length ? Object.keys(data.content[0]) : [];
+export default function Table<T>({data, searchLabel = "Keyword", onSearch, onAdd, onEdit, onClickPage}: TableProps<T>) {
+    const keys: string[] = data?.content?.length ? Object.keys(data.content[0] as any) : [];
     const [keyword, setKeyword] = useState<string>("");
 
     return (
@@ -89,15 +99,15 @@ export default function Table({data, searchLabel = "Keyword", onSearch, onAdd, o
                                 </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                {data?.content?.map((item) => (
-                                    <tr key={item.id}>
-                                        {keys.map((key, index) => (
-                                            index === 0
-                                                ? <td key={`${index}-${item[key]}`}
+                                {data?.content?.map((item: any, rowIndex) => (
+                                    <tr key={`${rowIndex}`}>
+                                        {keys.map((key, colIndex) => (
+                                            colIndex === 0
+                                                ? <td key={`${rowIndex}-${colIndex}-${item[key]}`}
                                                       className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
                                                     {item[key]}
                                                 </td>
-                                                : <td key={`${index}-${item[key]}`}
+                                                : <td key={`${rowIndex}-${colIndex}-${item[key]}`}
                                                       className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                     {item[key]}
                                                 </td>
@@ -123,6 +133,16 @@ export default function Table({data, searchLabel = "Keyword", onSearch, onAdd, o
                         </div>
                     </div>
                 </div>
+                {data
+                    ? (<Paginator empty={data.empty}
+                                  first={data.first}
+                                  last={data.last}
+                                  page={data.number}
+                                  size={data.size}
+                                  totalPages={data.totalPages}
+                                  onClick={(page) => onClickPage(keyword, page)}/>)
+                    : <></>
+                }
             </div>
         </div>
     );

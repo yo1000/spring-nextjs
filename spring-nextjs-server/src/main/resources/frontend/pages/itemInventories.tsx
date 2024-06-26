@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import Content from "@/components/Content";
-import Table from "@/components/Table";
+import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/context/AuthContext";
 import Modal from "@/components/Modal";
 
@@ -10,13 +10,17 @@ type ItemInventory = {
     quantity: number;
 };
 
-type PagedData = {
-    content: ItemInventory[];
+type ItemInventoryData = {
+    id: number;
+    itemId: number;
+    name: string;
+    quantity: number;
 };
+
 
 const ItemInventories = () => {
     const {user} = useAuth();
-    const [itemInventories, setItemInventories] = useState<PagedData | null>();
+    const [itemInventories, setItemInventories] = useState<PagedData<ItemInventory> | null>();
     const [editModalShown, setEditModalShown] = useState(false);
     const [editModalData, setEditModalData] = useState<any | null | undefined>(null);
     const [addModalShown, setAddModalShown] = useState(false);
@@ -64,7 +68,7 @@ const ItemInventories = () => {
                             quantity: datum.quantity,
                         }))
                         ?.sort((a, b) => (a.id - b.id))
-                }}
+                } as PagedData<ItemInventoryData>}
                 searchLabel={`Name`}
                 onSearch={async (v) => {
                     const resp = await fetch(`http://localhost:8080/itemInventories?itemName=${encodeURIComponent(v)}`, {
@@ -96,6 +100,22 @@ const ItemInventories = () => {
                     setEditModalData(data);
 
                     setEditModalShown(true);
+                }}
+                onClickPage={async (keyword, page) => {
+                    const resp = await fetch(`http://localhost:8080/itemInventories?itemName=${encodeURIComponent(keyword)}&page=${page}`, {
+                        method: `GET`,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${user?.access_token}`,
+                        },
+                        body: null,
+                    });
+
+                    if (resp.ok) {
+                        setItemInventories(await resp.json());
+                    } else {
+                        console.error(resp.status);
+                    }
                 }}
             />
             <Modal open={editModalShown}
@@ -133,7 +153,7 @@ const ItemInventories = () => {
                                ...keepContent,
                                newContentItem,
                            ]
-                       });
+                       } as PagedData<ItemInventory>);
 
                        setEditModalShown(false);
                    }}
@@ -191,7 +211,7 @@ const ItemInventories = () => {
                                    quantity: data.quantity,
                                },
                            ]
-                       });
+                       } as PagedData<ItemInventory>);
 
                        setAddModalShown(false);
                    }}
