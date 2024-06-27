@@ -43,7 +43,7 @@ Start API server module
 
 ```bash
 ./mvnw clean spring-boot:run \
--pl spring-nextjs-server \
+-pl api \
 -Dspring-boot.run.jvmArguments="
 -Dspring.datasource.url=jdbc:postgresql://localhost:5432/spring_nextjs
 -Dspring.datasource.username=postgres
@@ -55,17 +55,25 @@ Start API server module
 -Dspring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
 -Dapp.security.idp=keycloak
 -Dapp.security.cors.allowed-origins=http://localhost:3000
--Dapp.frontend.oidc.authority=http://localhost:8000/realms/master
--Dapp.frontend.oidc.client-id=spring-nextjs
--Dapp.frontend.oidc.redirect-uri=http://localhost:8080
--Dapp.frontend.oidc.post-logout-redirect-uri=http://localhost:8080
 "
 ```
 
 Start frontend module
 
 ```bash
-(cd spring-nextjs-server/src/main/resources/frontend/; \
+(cd ui; \
+npm install;
+NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
+NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
+NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
+NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
+npm run build && npm run serve)
+```
+
+Start frontend module as hot-reload
+
+```bash
+(cd ui; \
 npm install;
 NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
 NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \

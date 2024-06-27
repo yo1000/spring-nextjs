@@ -15,6 +15,6 @@
 	</properties>
 
 	<modules>
-		<module>spring-nextjs-server</module>
+		<module>api</module>
 	</modules>
 </project>

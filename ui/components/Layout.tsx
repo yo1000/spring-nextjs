@@ -18,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
 
     const navigation = [
         { name: 'Showcase', href: `/showcase/`, protected: false },
-        { name: 'Items', href: `/items/`, protected: true },
+        { name: 'Items', href: `/items/`, protected: false },
         { name: 'Item Inventories', href: `/itemInventories/`, protected: true },
         { name: 'Weapons', href: `/weapons/`, protected: true },
         { name: 'Weapon Remodels', href: `/weaponRemodels/`, protected: true },

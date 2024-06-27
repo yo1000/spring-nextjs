@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@PreAuthorize("hasAnyAuthority({'admin', 'spring-nextjs.item:write', 'spring-nextjs.item:read'})")
+//@PreAuthorize("hasAnyAuthority({'admin', 'spring-nextjs.item:write', 'spring-nextjs.item:read'})")
+@PreAuthorize("permitAll()")
 public class ItemApplicationService {
     private final ItemRepository itemRepository;
 

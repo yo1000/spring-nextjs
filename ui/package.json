@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "serve": "serve out"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.0",
@@ -23,6 +24,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "postcss": "^8",
+    "serve": "^14.2.3",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }

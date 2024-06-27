@@ -1,4 +1,4 @@
-import React, {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import React, {createContext, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import {User, UserManager} from 'oidc-client-ts';
 
 type AuthContextType = {
@@ -12,33 +12,36 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children, oidcConfig }: { children: ReactNode, oidcConfig: any }) => {
     const [user, setUser] = useState<User | null>(null);
 
-    const userManager = new UserManager(oidcConfig);
+    const userManager = useMemo(() => new UserManager(oidcConfig), [oidcConfig]);
 
     useEffect(() => {
+        const handleUserLoaded = (user: User) => setUser(user);
+        const handleUserUnloaded = () => setUser(null);
+
         userManager.getUser().then((user) => {
             if (user) {
                 setUser(user);
             // } else {
-            //     // ユーザが存在しない場合、サインインリダイレクトを行う
+            //     // Sign-in redirect if user has not yet loaded
             //     userManager.signinRedirect();
             }
         });
 
-        userManager.events.addUserLoaded((user) => {
-            setUser(user);
-        });
+        userManager.events.addUserLoaded(handleUserLoaded);
+        userManager.events.addUserUnloaded(handleUserUnloaded);
 
-        userManager.events.addUserUnloaded(() => {
-            setUser(null);
-        });
-
-        // 認証情報の検証
         userManager.signinRedirectCallback().then((user) => {
             setUser(user);
         }).catch((error) => {
             console.error('signinRedirectCallback error', error);
         });
-    }, []);
+
+        // Cleanup function to remove event listeners
+        return () => {
+            userManager.events.removeUserLoaded(handleUserLoaded);
+            userManager.events.removeUserUnloaded(handleUserUnloaded);
+        };
+    }, [userManager]);
 
     const signinRedirect = () => {
         userManager.signinRedirect();
