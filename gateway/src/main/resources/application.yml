@@ -1,0 +1,30 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: spring-nextjs-gateway
+
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          relying-party:
+#            provider: identity-provider
+#            client-id: spring-gateway
+#            client-secret: ovJAxSmla3LXFiLfwi81H2IPDXKZjsCX
+#            authorization-grant-type: client_credentials
+#            scope: [openid, profile, email]
+#        provider:
+#          identity-provider:
+#            issuer-uri: http://localhost:8000/realms/master
+#
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: api_route
+#          uri: http://localhost:8080
+#          predicates:
+#            - Path=/api/**
+#          filters:
+#            - RewritePath=/api/(?<segment>.*), /${segment}

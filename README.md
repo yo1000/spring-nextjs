@@ -44,17 +44,17 @@ Start API server module
 ```bash
 ./mvnw clean spring-boot:run \
 -pl api \
--Dspring-boot.run.jvmArguments="
--Dspring.datasource.url=jdbc:postgresql://localhost:5432/spring_nextjs
--Dspring.datasource.username=postgres
--Dspring.datasource.password=postgres
--Dspring.jpa.defer-datasource-initialization=true
--Dspring.jpa.show-sql=false
--Dspring.jpa.hibernate.ddl-auto=create
--Dspring.sql.init.mode=always
--Dspring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
--Dapp.security.idp=keycloak
--Dapp.security.cors.allowed-origins=http://localhost:3000
+-Dspring-boot.run.arguments="
+  --spring.datasource.url=jdbc:postgresql://localhost:5432/spring_nextjs
+  --spring.datasource.username=postgres
+  --spring.datasource.password=postgres
+  --spring.jpa.defer-datasource-initialization=true
+  --spring.jpa.show-sql=false
+  --spring.jpa.hibernate.ddl-auto=create
+  --spring.sql.init.mode=always
+  --spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
+  --app.security.idp=keycloak
+  --app.security.cors.allowed-origins=http://localhost:3000
 "
 ```
 
@@ -80,6 +80,26 @@ NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
 NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
 NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
 npm run dev)
+```
+
+Start gateway server module
+
+```bash
+./mvnw clean spring-boot:run \
+-pl gateway \
+-Dspring-boot.run.arguments="
+  --spring.application.name=spring-nextjs-gateway 
+  --spring.security.oauth2.client.registration.relying-party.provider=identity-provider 
+  --spring.security.oauth2.client.registration.relying-party.client-id=spring-gateway 
+  --spring.security.oauth2.client.registration.relying-party.client-secret=ovJAxSmla3LXFiLfwi81H2IPDXKZjsCX 
+  --spring.security.oauth2.client.registration.relying-party.authorization-grant-type=client_credentials 
+  --spring.security.oauth2.client.registration.relying-party.scope=openid,profile,email 
+  --spring.security.oauth2.client.provider.identity-provider.issuer-uri=http://localhost:8000/realms/master 
+  --spring.cloud.gateway.routes[0].id=api_route 
+  --spring.cloud.gateway.routes[0].uri=http://localhost:8080 
+  --spring.cloud.gateway.routes[0].predicates[0]=Path=/api/** 
+  --spring.cloud.gateway.routes[0].filters[0]=RewritePath=/api/(?<segment>.*),/\${segment}
+"
 ```
 
 
@@ -126,4 +146,50 @@ curl -XPATCH \
     "quantity": 20
 }' \
 localhost:8080/itemInventories/1
+```
+
+
+How to use the main API (via Gateway)
+--------------------------------------------------------------------------------
+
+List items
+
+```bash
+curl -XGET \
+-H'Content-Type: application/json' \
+localhost:8090/api/items?page=0
+```
+
+List item inventories
+
+```bash
+curl -XGET \
+-H'Content-Type: application/json' \
+localhost:8090/api/itemInventories?page=0
+```
+
+Create item inventory
+
+```bash
+curl -XPOST \
+-H'Content-Type: application/json' \
+-d '{
+    "id": 1,
+    "item": {
+        "id": 1
+    },
+    "quantity": 10
+}' \
+localhost:8090/api/itemInventories
+```
+
+Update item inventory differentially
+
+```bash
+curl -XPATCH \
+-H'Content-Type: application/merge-patch+json' \
+-d '{
+    "quantity": 20
+}' \
+localhost:8090/api/itemInventories/1
 ```
