@@ -12,10 +12,18 @@ Requirements
 - Docker
 
 
+Technology Stacks
+--------------------------------------------------------------------------------
+
+- API server: Java, Spring Boot, Spring Security, Spring Security
+- Gateway server: Java, Spring Boot, Spring Security, Spring Cloud Gateway
+- Frontend: TypeScript, Next.js, oidc-client-ts, Tailwind CSS
+
+
 How to build
 --------------------------------------------------------------------------------
 
-Build server module for release
+Build server modules as release version
 
 ```bash
 APP_VERSION=1.0.0
@@ -23,10 +31,24 @@ APP_VERSION=1.0.0
 ./mvnw -Dapp.version="${APP_VERSION}" clean package
 ```
 
-Build server module for development
+Build server modules as development version
 
 ```bash
 ./mvnw clean package
+```
+
+Build frontend module
+
+```bash
+(cd ui; \
+npm install;
+NEXT_PUBLIC_OIDC_AUTHORITY=${OIDC_ISSUER_URI} \
+NEXT_PUBLIC_OIDC_CLIENT_ID=${OIDC_CLIENT_ID} \
+NEXT_PUBLIC_OIDC_REDIRECT_URI=${OIDC_POST_SIGNIN_REDIRECT_URI} \
+NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=${OIDC_POST_SIGNOUT_URI} \
+npm run build)
+
+ls ui/out
 ```
 
 
@@ -106,11 +128,11 @@ Start gateway server module
 How to use main APIs
 --------------------------------------------------------------------------------
 
-List items
+List items (Public API)
 
 ```bash
 curl -XGET \
--H'Content-Type: application/json' \
+-H"Content-Type: application/json" \
 localhost:8080/items?page=0
 ```
 
@@ -118,7 +140,8 @@ List item inventories
 
 ```bash
 curl -XGET \
--H'Content-Type: application/json' \
+-H"Content-Type: application/json" \
+-H"Authorization: Bearer ${ACCESS_TOKEN}" \
 localhost:8080/itemInventories?page=0
 ```
 
@@ -126,7 +149,8 @@ Create item inventory
 
 ```bash
 curl -XPOST \
--H'Content-Type: application/json' \
+-H"Content-Type: application/json" \
+-H"Authorization: Bearer ${ACCESS_TOKEN}" \
 -d '{
     "id": 1,
     "item": {
@@ -141,7 +165,8 @@ Update item inventory differentially
 
 ```bash
 curl -XPATCH \
--H'Content-Type: application/merge-patch+json' \
+-H"Content-Type: application/merge-patch+json" \
+-H"Authorization: Bearer ${ACCESS_TOKEN}" \
 -d '{
     "quantity": 20
 }' \
@@ -152,11 +177,11 @@ localhost:8080/itemInventories/1
 How to use the main API (via Gateway)
 --------------------------------------------------------------------------------
 
-List items
+List items (Public API)
 
 ```bash
 curl -XGET \
--H'Content-Type: application/json' \
+-H"Content-Type: application/json" \
 localhost:8090/api/items?page=0
 ```
 
@@ -164,7 +189,7 @@ List item inventories
 
 ```bash
 curl -XGET \
--H'Content-Type: application/json' \
+-H"Content-Type: application/json" \
 localhost:8090/api/itemInventories?page=0
 ```
 
@@ -172,7 +197,7 @@ Create item inventory
 
 ```bash
 curl -XPOST \
--H'Content-Type: application/json' \
+-H"Content-Type: application/json" \
 -d '{
     "id": 1,
     "item": {
@@ -187,7 +212,7 @@ Update item inventory differentially
 
 ```bash
 curl -XPATCH \
--H'Content-Type: application/merge-patch+json' \
+-H"Content-Type: application/merge-patch+json" \
 -d '{
     "quantity": 20
 }' \
