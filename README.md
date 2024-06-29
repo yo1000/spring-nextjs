@@ -12,6 +12,14 @@ Requirements
 - Docker
 
 
+Technology Stacks
+--------------------------------------------------------------------------------
+
+- API server: Java, Spring Boot, Spring Security, Spring Security
+- Gateway server: Java, Spring Boot, Spring Security, Spring Cloud Gateway
+- Frontend: TypeScript, Next.js, oidc-client-ts, Tailwind CSS
+
+
 How to build
 --------------------------------------------------------------------------------
 
