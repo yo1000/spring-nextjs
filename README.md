@@ -29,6 +29,18 @@ Build server modules as development version
 ./mvnw clean package
 ```
 
+Build frontend module
+
+```bash
+(cd ui; \
+npm install;
+NEXT_PUBLIC_OIDC_AUTHORITY=${OIDC_ISSUER_URI} \
+NEXT_PUBLIC_OIDC_CLIENT_ID=${OIDC_CLIENT_ID} \
+NEXT_PUBLIC_OIDC_REDIRECT_URI=${OIDC_POST_SIGNIN_REDIRECT_URI} \
+NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=${OIDC_POST_SIGNOUT_URI} \
+npm run build)
+```
+
 
 How to start for development
 --------------------------------------------------------------------------------
