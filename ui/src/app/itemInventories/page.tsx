@@ -1,11 +1,11 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import Content from "@/app/src/components/Content";
-import Table, {PagedData} from "@/app/src/components/Table";
-import {useAuth} from "@/app/src/contexts/AuthContext";
-import Modal from "@/app/src/components/Modal";
-import Fetch from "@/app/src/utils/Fetch";
+import Content from "@/components/Content";
+import Table, {PagedData} from "@/components/Table";
+import {useAuth} from "@/contexts/AuthContext";
+import Modal from "@/components/Modal";
+import Fetch from "@/utils/Fetch";
 
 type ItemInventory = {
     id: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import Content from "@/app/src/components/Content";
+import Content from "@/components/Content";
 
 const Showcase = () => {
     return (

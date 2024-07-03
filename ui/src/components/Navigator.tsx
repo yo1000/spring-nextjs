@@ -3,7 +3,7 @@
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/react';
 import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline';
 import React from "react";
-import {useAuth} from "@/app/src/contexts/AuthContext";
+import {useAuth} from "@/contexts/AuthContext";
 import Link from "next/link";
 import Image from "next/image";
 import {usePathname} from "next/navigation";

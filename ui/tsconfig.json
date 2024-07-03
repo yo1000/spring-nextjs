@@ -16,7 +16,7 @@
     "baseUrl": ".",
     "types": ["node"],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {

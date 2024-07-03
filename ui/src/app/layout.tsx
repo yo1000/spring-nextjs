@@ -1,11 +1,11 @@
 'use client';
 
-import {AuthProvider} from '@/app/src/contexts/AuthContext';
+import {AuthProvider} from '@/contexts/AuthContext';
 import React, {useEffect, useState} from "react";
 import {UserManagerSettings, WebStorageStateStore} from "oidc-client-ts";
 import {Noto_Color_Emoji, Noto_Sans, Noto_Sans_JP} from "next/font/google";
 import "./globals.css";
-import Navigator from "@/app/src/components/Navigator";
+import Navigator from "@/components/Navigator";
 
 const noTofuEmoji = Noto_Color_Emoji({
     weight: "400",

@@ -1,14 +1,14 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import Content from "@/app/src/components/Content";
-import Table, {PagedData} from "@/app/src/components/Table";
-import {useAuth} from "@/app/src/contexts/AuthContext";
-import Fetch from "@/app/src/utils/Fetch";
+import Content from "@/components/Content";
+import Table, {PagedData} from "@/components/Table";
+import {useAuth} from "@/contexts/AuthContext";
+import Fetch from "@/utils/Fetch";
 
-const Items = () => {
+const Weapons = () => {
     const {user} = useAuth();
-    const [items, setItems] = useState<PagedData<any> | null>();
+    const [weapons, setWeapons] = useState<PagedData<any> | null>();
     const [fetch, setFetch] = useState(new Fetch(user?.access_token));
 
     useEffect(() => {
@@ -16,37 +16,36 @@ const Items = () => {
     }, [user?.access_token]);
 
     useEffect(() => {
-        const fetchItems = async () => {
+        const fetchWeapons = async () => {
             try {
-                setItems(await fetch.to(`http://localhost:8080/items`));
+                setWeapons(await fetch.to(`http://localhost:8080/weapons`));
             } catch (e) {
                 console.error(e);
             }
         };
 
         try {
-            void fetchItems();
+            void fetchWeapons();
         } catch (e) {
             console.error(e);
         }
     }, [user?.profile?.preferred_username]);
 
     return (
-        <Content title={`Items`}>
+        <Content title={`Weapons`}>
             <Table
-                data={items}
+                data={weapons}
                 searchLabel={`Name`}
                 onSearch={async (v) => {
                     try {
-                        setItems(await fetch.to(`http://localhost:8080/items?name=${encodeURIComponent(v)}`));
+                        setWeapons(await fetch.to(`http://localhost:8080/weapons?name=${encodeURIComponent(v)}`));
                     } catch (e) {
                         console.error(e);
                     }
-
                 }}
                 onClickPage={async (keyword, page) => {
                     try {
-                        setItems(await fetch.to(`http://localhost:8080/items?name=${encodeURIComponent(keyword)}&page=${page}`));
+                        setWeapons(await fetch.to(`http://localhost:8080/weapons?name=${encodeURIComponent(keyword)}&page=${page}`));
                     } catch (e) {
                         console.error(e);
                     }
@@ -56,4 +55,4 @@ const Items = () => {
     );
 }
 
-export default Items;
+export default Weapons;
