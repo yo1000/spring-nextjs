@@ -1,10 +1,10 @@
 'use client';
 
 import {useEffect, useState} from "react";
-import Content from "@/app/components/Content";
-import Table, {PagedData} from "@/app/components/Table";
-import {useAuth} from "@/app/contexts/AuthContext";
-import Fetch from "@/app/utils/Fetch";
+import Content from "@/app/src/components/Content";
+import Table, {PagedData} from "@/app/src/components/Table";
+import {useAuth} from "@/app/src/contexts/AuthContext";
+import Fetch from "@/app/src/utils/Fetch";
 
 type WeaponRemodel = {
     id: number;
