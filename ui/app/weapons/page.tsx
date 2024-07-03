@@ -1,8 +1,10 @@
+'use client';
+
 import {useEffect, useState} from "react";
-import Content from "@/components/Content";
-import Table, {PagedData} from "@/components/Table";
-import {useAuth} from "@/context/AuthContext";
-import Fetch from "@/utils/Fetch";
+import Content from "@/app/components/Content";
+import Table, {PagedData} from "@/app/components/Table";
+import {useAuth} from "@/app/contexts/AuthContext";
+import Fetch from "@/app/utils/Fetch";
 
 const Weapons = () => {
     const {user} = useAuth();

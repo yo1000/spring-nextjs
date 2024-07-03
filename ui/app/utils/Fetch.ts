@@ -1,3 +1,5 @@
+'use client';
+
 export class FetchError extends Error {
     readonly reason?: any;
 

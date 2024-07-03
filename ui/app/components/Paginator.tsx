@@ -1,3 +1,5 @@
+'use client';
+
 import {ArrowLongLeftIcon, ArrowLongRightIcon} from '@heroicons/react/20/solid'
 
 type PaginatorProps = {

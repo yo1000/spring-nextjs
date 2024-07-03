@@ -1,3 +1,5 @@
+'use client';
+
 import React, {createContext, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import {User, UserManager} from 'oidc-client-ts';
 

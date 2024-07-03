@@ -1,4 +1,6 @@
-import Content from "@/components/Content";
+'use client';
+
+import Content from "@/app/components/Content";
 
 const Index = () => {
     return (

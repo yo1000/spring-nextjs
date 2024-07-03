@@ -1,5 +1,7 @@
+'use client';
+
 import {useState} from "react";
-import Paginator from "@/components/Paginator";
+import Paginator from "@/app/components/Paginator";
 
 export type PagedData<T> = {
     content: T[] | null | undefined;
