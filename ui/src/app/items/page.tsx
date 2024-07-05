@@ -9,11 +9,7 @@ import Fetch from "@/utils/Fetch";
 const Items = () => {
     const {user} = useAuth();
     const [items, setItems] = useState<PagedData<any> | null>();
-    const [fetch, setFetch] = useState(new Fetch(user?.access_token));
-
-    useEffect(() => {
-        setFetch(new Fetch(user?.access_token));
-    }, [user?.access_token]);
+    const [fetch, setFetch] = useState(new Fetch());
 
     useEffect(() => {
         const fetchItems = async () => {

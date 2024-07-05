@@ -11,8 +11,9 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children, oidcConfig }: { children: ReactNode, oidcConfig: any }) => {
+export const AuthProvider = ({children, oidcConfig}: { children: ReactNode, oidcConfig: any }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [eventAdded, setEventAdded] = useState(false);
 
     const userManager = useMemo(() => new UserManager(oidcConfig), [oidcConfig]);
 
@@ -20,41 +21,45 @@ export const AuthProvider = ({ children, oidcConfig }: { children: ReactNode, oi
         const handleUserLoaded = (user: User) => setUser(user);
         const handleUserUnloaded = () => setUser(null);
 
-        userManager.getUser().then((user) => {
-            if (user) {
-                setUser(user);
-            // } else {
-            //     // Sign-in redirect if user has not yet loaded
-            //     userManager.signinRedirect();
+        if (!eventAdded) {
+            userManager.events.addUserLoaded(handleUserLoaded);
+            userManager.events.addUserUnloaded(handleUserUnloaded);
+            userManager.events.addSilentRenewError(handleUserUnloaded);
+            setEventAdded(true);
+        }
+
+        userManager.getUser().then((u) => {
+            if (!u) {
+                setUser(null);
+                // // Sign-in redirect if user has not yet loaded
+                // userManager.signinRedirect();
+                return;
+            }
+
+            if (u.access_token !== user?.access_token) {
+                setUser(u);
             }
         });
 
-        userManager.events.addUserLoaded(handleUserLoaded);
-        userManager.events.addUserUnloaded(handleUserUnloaded);
-
-        userManager.signinRedirectCallback().then((user) => {
-            setUser(user);
-        }).catch((error) => {
-            console.error('signinRedirectCallback error', error);
-        });
-
-        // Cleanup function to remove event listeners
-        return () => {
-            userManager.events.removeUserLoaded(handleUserLoaded);
-            userManager.events.removeUserUnloaded(handleUserUnloaded);
-        };
+        if (!user?.access_token) {
+            userManager.signinRedirectCallback().then((user) => {
+                setUser(user);
+            }).catch((error) => {
+                console.error('signinRedirectCallback error', error);
+            });
+        }
     }, [userManager]);
 
     const signinRedirect = () => {
-        userManager.signinRedirect();
+        void userManager.signinRedirect();
     };
 
     const signoutRedirect = () => {
-        userManager.signoutRedirect();
+        void userManager.signoutRedirect();
     };
 
     return (
-        <AuthContext.Provider value={{ user, signinRedirect, signoutRedirect }}>
+        <AuthContext.Provider value={{user, signinRedirect, signoutRedirect}}>
             {children}
         </AuthContext.Provider>
     );
