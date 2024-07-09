@@ -18,6 +18,7 @@ export default function Navigator() {
         { name: 'Item Inventories', href: `/itemInventories/`, protected: true },
         { name: 'Weapons', href: `/weapons/`, protected: true },
         { name: 'Weapon Remodels', href: `/weaponRemodels/`, protected: true },
+        { name: 'User Profiles', href: `/userProfiles/`, protected: true },
     ];
 
     function classNames(...classes: string[]) {

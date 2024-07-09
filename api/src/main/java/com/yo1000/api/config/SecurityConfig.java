@@ -78,25 +78,26 @@ public class SecurityConfig {
     @Bean
     @ConditionalOnProperty(name = "app.security.idp", havingValue = "keycloak")
     public JwtAuthenticationConverter keycloakJwtAuthenticationConverter() {
-        Converter<Jwt, Collection<GrantedAuthority>> converter = source -> {
-            Map<String, Object> realmAccess = source.getClaimAsMap("realm_access");
+        Converter<Jwt, Collection<GrantedAuthority>> converter = jwt -> {
+            Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
             List<String> realmRoles = (List<String>) realmAccess.get("roles");
 
-            Map<String, Object> resourceAccess = source.getClaimAsMap("resource_access");
+            Map<String, Object> resourceAccess = jwt.getClaimAsMap("resource_access");
             List<String> resourceRoles = resourceAccess.entrySet().stream()
                     .flatMap(entry -> ((Map<String, List<String>>) entry.getValue()).get("roles").stream()
                             .map(name -> entry.getKey() + "." + name))
                     .toList();
 
-            Collection<GrantedAuthority> roles = Stream.concat(realmRoles.stream(), resourceRoles.stream())
+            Collection<GrantedAuthority> keycloakRoles = Stream.concat(realmRoles.stream(), resourceRoles.stream())
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toCollection(ArrayList::new));
 
-            return roles;
+            return keycloakRoles;
         };
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
+        jwtAuthenticationConverter.setPrincipalClaimName("preferred_username");
         return jwtAuthenticationConverter;
     }
 }

@@ -106,11 +106,11 @@ export default function Table<T>({data, searchLabel = "Keyword", onSearch, onAdd
                                         {keys.map((key, colIndex) => (
                                             colIndex === 0
                                                 ? <td key={`${rowIndex}-${colIndex}-${item[key]}`}
-                                                      className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
+                                                      className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
                                                     {item[key]}
                                                 </td>
                                                 : <td key={`${rowIndex}-${colIndex}-${item[key]}`}
-                                                      className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                                      className="whitespace-nowrap overflow-hidden text-ellipsis max-w-xs px-3 py-4 text-sm text-gray-500">
                                                     {item[key]}
                                                 </td>
                                         ))}

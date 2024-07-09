@@ -1,3 +1,138 @@
+-- userProfile
+
+INSERT INTO user_profile(
+    "id", "username", "family_name", "given_name", "age", "gender", "profile"
+) VALUES (
+    1,
+    'squall',
+    'Leonhart',
+    'Squall',
+    17,
+    'Male',
+    'Uses a sword called a gunblade. Special skill is Renzokuken, using the gunblade. Silent, and a bit cold.'
+);
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        2,
+        'zell',
+        'Dincht',
+        'Zell',
+        17,
+        'Male',
+        'Loves the hot dogs sold in the Garden cafeteria. Uses close combat fighting skills to defeat enemies with punches and kicks.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        3,
+        'irvine',
+        'Kinneas',
+        'Irvine',
+        17,
+        'Male',
+        'An expert marksman. Can use specialized bullets to attack enemies. Doesn''t perform very well under pressure.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        4,
+        'quistis',
+        'Trepe',
+        'Quistis',
+        18,
+        'Female',
+        'Uses a whip. When in danger, uses monster skills she has learned. Her admirers in the Garden have formed a fan club.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        5,
+        'rinoa',
+        'Heartilly',
+        'Rinoa',
+        17,
+        'Female',
+        'A member of the Timber resistance group Forest Owls. Uses her dog to make special attacks.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        6,
+        'selphie',
+        'Tilmitt',
+        'Selphie',
+        17,
+        'Female',
+        'A transfer student to Balamb Garden. Uses giant nunchaku and special magic.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        7,
+        'seifer',
+        'Almasy',
+        'Seifer',
+        18,
+        'Male',
+        'One of the top fighters of the Garden. His temperament kept him from becoming a SeeD member. Uses a gunblade.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        8,
+        'edea',
+        'Kramer',
+        'Edea',
+        null,
+        'Female',
+        'A sorceress. As a sorceress, she is well-versed in magic. Uses a special magic attack called Sorcery.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        9,
+        'laguna',
+        'Loire',
+        'Laguna',
+        44,
+        'Male',
+        'An energetic man with a big heart. Uses a machine gun. Fires bursts at enemies to help party members in danger.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        10,
+        'kiros',
+        'Seagill',
+        'Kiros',
+        40,
+        'Male',
+        'Wears sharp blade called Katal on both arms. His fighting style is also unique, like his weapon.'
+    );
+
+INSERT INTO user_profile("id", "username", "family_name", "given_name", "age", "gender", "profile")
+VALUES
+    (
+        11,
+        'ward',
+        'Zabac',
+        'Ward',
+        42,
+        'Male',
+        'A big, powerful man. Uses the Harpoon, an unusually heavy weapon, and attacks by throwing it at the enemy.'
+    );
+
+
 -- item
 
 INSERT INTO item("id", "name", "price", "sell_price") VALUES(0, '', null, null);

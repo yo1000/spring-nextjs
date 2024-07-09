@@ -223,6 +223,28 @@ curl -s \
     }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
 
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"userProfile:read\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+      \"name\": \"userProfile:write\",
+      \"description\": \"\",
+      \"attributes\": {}
+    }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}/roles" \
+
 KC_CLIENT_ROLE_ID=$(
 echo "${KC_CLIENT_RESP}" \
   | jq -r '.id' \
@@ -292,6 +314,22 @@ KC_CLIENT_ROLE_ID_WEAPONREMODEL_WRITE=$(curl -s \
   | jq -r '.id' \
 )
 
+KC_CLIENT_ROLE_ID_USERPROFILE_READ=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/userProfile:read" \
+  | jq -r '.id' \
+)
+
+KC_CLIENT_ROLE_ID_USERPROFILE_WRITE=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/master/clients/${KC_CLIENT_ID}/roles/userProfile:write" \
+  | jq -r '.id' \
+)
+
 
 # Re-Authenticate
 KC_ACCESS_TOKEN=$(
@@ -304,22 +342,22 @@ curl -s \
   | jq -r ".access_token" \
 )
 
-# Create user - alice
+# Create user - squall
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
   -d "{
-    \"username\": \"alice\",
-    \"email\": \"alice@localhost\",
+    \"username\": \"squall\",
+    \"email\": \"squall@localhost\",
     \"emailVerified\": true,
-    \"firstName\": \"Alice\",
-    \"lastName\": \"Un\",
+    \"firstName\": \"Squall\",
+    \"lastName\": \"Leonhart\",
     \"enabled\": true,
     \"credentials\": [{
       \"type\": \"password\",
       \"temporary\": false,
-      \"value\": \"Alice-1234\"
+      \"value\": \"Squall-1234\"
     }]
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
@@ -328,7 +366,7 @@ KC_USER_ID=$(curl -s \
   -X GET \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
-  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=alice" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=squall" \
   | jq -r '.[0].id' \
 )
 
@@ -391,6 +429,17 @@ curl -s \
   }]" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
 
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_USERPROFILE_WRITE}\",
+    \"name\":\"userProfile:write\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
 # Re-Authenticate
 KC_ACCESS_TOKEN=$(
 curl -s \
@@ -402,22 +451,22 @@ curl -s \
   | jq -r ".access_token" \
 )
 
-# Create user - bob
+# Create user - zell
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
   -d "{
-    \"username\": \"bob\",
-    \"email\": \"bob@localhost\",
+    \"username\": \"zell\",
+    \"email\": \"zell@localhost\",
     \"emailVerified\": true,
-    \"firstName\": \"Bob\",
-    \"lastName\": \"Deux\",
+    \"firstName\": \"Zell\",
+    \"lastName\": \"Dincht\",
     \"enabled\": true,
     \"credentials\": [{
       \"type\": \"password\",
       \"temporary\": false,
-      \"value\": \"Bob-1234\"
+      \"value\": \"Zell-1234\"
     }]
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
@@ -426,7 +475,7 @@ KC_USER_ID=$(curl -s \
   -X GET \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
-  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=bob" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=zell" \
   | jq -r '.[0].id' \
 )
 
@@ -474,54 +523,133 @@ curl -s \
   }]" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
 
-# Create user - carol
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_USERPROFILE_READ}\",
+    \"name\":\"userProfile:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+# Create user - irvine
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
   -d "{
-    \"username\": \"carol\",
-    \"email\": \"carol@localhost\",
+    \"username\": \"irvine\",
+    \"email\": \"irvine@localhost\",
     \"emailVerified\": true,
-    \"firstName\": \"Carol\",
-    \"lastName\": \"Trois\",
+    \"firstName\": \"Irvine\",
+    \"lastName\": \"Kinneas\",
     \"enabled\": true,
     \"credentials\": [{
       \"type\": \"password\",
       \"temporary\": false,
-      \"value\": \"Carol-1234\"
+      \"value\": \"Irvine-1234\"
     }]
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
 
-# Create user - dave
+# Create user - quistis
 curl -s \
   -X POST \
   -H "Content-Type: application/json" \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
   -d "{
-    \"username\": \"dave\",
-    \"email\": \"dave@localhost\",
+    \"username\": \"quistis\",
+    \"email\": \"quistis@localhost\",
     \"emailVerified\": true,
-    \"firstName\": \"Dave\",
-    \"lastName\": \"Quatre\",
+    \"firstName\": \"Quistis\",
+    \"lastName\": \"Trepe\",
     \"enabled\": true,
     \"credentials\": [{
       \"type\": \"password\",
       \"temporary\": false,
-      \"value\": \"Dave-1234\"
+      \"value\": \"Quistis-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+# Create user - quistis
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"quistis\",
+    \"email\": \"quistis@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Quistis\",
+    \"lastName\": \"Trepe\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Quistis-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+# Create user - rinoa
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"rinoa\",
+    \"email\": \"rinoa@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Rinoa\",
+    \"lastName\": \"Heartilly\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Rinoa-1234\"
+    }]
+  }" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
+
+# Create user - selphie
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "{
+    \"username\": \"selphie\",
+    \"email\": \"selphie@localhost\",
+    \"emailVerified\": true,
+    \"firstName\": \"Selphie\",
+    \"lastName\": \"Tilmitt\",
+    \"enabled\": true,
+    \"credentials\": [{
+      \"type\": \"password\",
+      \"temporary\": false,
+      \"value\": \"Selphie-1234\"
     }]
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
 
 echo "User created
 
-| Username | Password    | Email            | Role                                                               |
-|----------|-------------|------------------|--------------------------------------------------------------------|
-| alice    | Alice-1234  | alice@localhost  | item:write, itemInventory:write, weapon:write, weaponRemodel:write |
-| bob      | Bob-1234    | bob@localhost    | item:read , itemInventory:read , weapon:read , weaponRemodel:read  |
-| carol    | Carol-1234  | carol@localhost  |                                                                    |
-| dave     | Dave-1234   | dave@localhost   |                                                                    |
+| Username | Password     | Email             | Role                               |
+|----------|--------------|-------------------|------------------------------------|
+| admin    | admin        |                   | admin                              |
+| squall   | Squall-1234  | squall@localhost  | item:write, itemInventory:write,   |
+|          |              |                   | weapon:write, weaponRemodel:write, |
+|          |              |                   | userProfile:write                  |
+| zell     | Zell-1234    | zell@localhost    | item:read, itemInventory:read,     |
+|          |              |                   | weapon:read, weaponRemodel:read,   |
+|          |              |                   | userProfile:read                   |
+| irvine   | Irvine-1234  | irvine@localhost  |                                    |
+| quistis  | Quistis-1234 | quistis@localhost |                                    |
+| rinoa    | Rinoa-1234   | rinoa@localhost   |                                    |
+| selphie  | Selphie-1234 | selphie@localhost |                                    |
 "
 
-while :; do sleep 10; done
+# for Debug
+#while :; do sleep 10; done
