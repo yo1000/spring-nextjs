@@ -1,6 +1,9 @@
 package com.yo1000.api.presentation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.yo1000.api.application.UserProfileApplicationService;
+import com.yo1000.api.application.json.ValidatableObjectReader;
 import com.yo1000.api.domain.model.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +50,8 @@ public class UserProfileRestController {
     @PatchMapping(consumes = "application/merge-patch+json")
     public UserProfile patchByUsername(
             @RequestParam("username") String username,
-            @RequestBody UserProfilePatchRequest userProfilePatchRequest
+            @RequestBody String userProfileDiffJson
     ) {
-        return userProfileApplicationService.updateDiffByUsername(username, userProfilePatchRequest);
+        return userProfileApplicationService.updateDiffByUsername(username, userProfileDiffJson);
     }
 }

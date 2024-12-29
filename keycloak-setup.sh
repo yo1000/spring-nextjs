@@ -554,6 +554,69 @@ curl -s \
   }" \
   "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users" \
 
+KC_USER_ID=$(curl -s \
+  -X GET \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users?exact=true&username=irvine" \
+  | jq -r '.[0].id' \
+)
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_ITEM_READ}\",
+    \"name\":\"item:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_ITEMINVENTORY_READ}\",
+    \"name\":\"itemInventory:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_WEAPON_READ}\",
+    \"name\":\"weapon:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_WEAPONREMODEL_READ}\",
+    \"name\":\"weaponRemodel:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
+curl -s \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  -d "[{
+    \"id\":\"${KC_CLIENT_ROLE_ID_USERPROFILE_READ}\",
+    \"name\":\"userProfile:read\",
+    \"description\":\"\"
+  }]" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/users/${KC_USER_ID}/role-mappings/clients/${KC_CLIENT_ID}" \
+
 # Create user - quistis
 curl -s \
   -X POST \
@@ -636,13 +699,16 @@ curl -s \
 
 echo "User created
 
-| Username | Password     | Email             | Role                               |
-|----------|--------------|-------------------|------------------------------------|
+| ID | Username | Password     | Email             | Role                               |
+|----|----------|--------------|-------------------|------------------------------------|
 | admin    | admin        |                   | admin                              |
 | squall   | Squall-1234  | squall@localhost  | item:write, itemInventory:write,   |
 |          |              |                   | weapon:write, weaponRemodel:write, |
 |          |              |                   | userProfile:write                  |
 | zell     | Zell-1234    | zell@localhost    | item:read, itemInventory:read,     |
+|          |              |                   | weapon:read, weaponRemodel:read,   |
+|          |              |                   | userProfile:read                   |
+| irvine   | Irvine-1234  | irvine@localhost    | item:read, itemInventory:read,     |
 |          |              |                   | weapon:read, weaponRemodel:read,   |
 |          |              |                   | userProfile:read                   |
 | irvine   | Irvine-1234  | irvine@localhost  |                                    |

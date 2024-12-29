@@ -17,6 +17,8 @@ public class ApplicationProperties {
     }
 
     public static class SecurityProperties {
+        public static final String IDP_KEYCLOAK = "keycloak";
+
         private String idp;
         private CorsProperties cors;
 

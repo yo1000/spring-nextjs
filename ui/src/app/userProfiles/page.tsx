@@ -94,7 +94,7 @@ const UserProfiles = () => {
             />
             <Modal open={editModalShown}
                    data={editModalData}
-                   readonly={[`id`]}
+                   readonly={[`id`, `username`]}
                    title={`Edit User Profile`}
                    onSave={async (data) => {
                        const keepContent = (userProfiles?.content ?? [])
@@ -114,23 +114,25 @@ const UserProfiles = () => {
                        }
 
                        try {
+                           const updateUserProfile = {
+                               id: newContentItem.id,
+                               familyName: newContentItem.familyName,
+                               givenName: newContentItem.givenName,
+                               age: newContentItem.age,
+                               gender: newContentItem.gender,
+                               profile: newContentItem.profile,
+                           }
+
                            //?username=${encodeURIComponent(v)}
                            await fetch.to(`http://localhost:8080/userProfiles?username=${encodeURIComponent(newContentItem.username)}`, {
                                method: `PATCH`,
                                headers: {
                                    "Content-Type": "application/merge-patch+json",
                                },
-                               body: JSON.stringify(newContentItem),
+                               body: JSON.stringify(updateUserProfile),
                            });
 
-                           setUserProfiles({
-                               ...userProfiles,
-                               content: [
-                                   ...keepContent,
-                                   newContentItem,
-                               ]
-                           } as PagedData<UserProfile>);
-
+                           setUserProfiles(await fetch.to(`http://localhost:8080/userProfiles`));
                            setEditModalShown(false);
                        } catch (e) {
                            console.error(e);

@@ -23,8 +23,6 @@ services:
     environment:
       POSTGRES_DB: spring_nextjs
       POSTGRES_PASSWORD: postgres
-    volumes:
-      - ./src/main/resources/sql:/docker-entrypoint-initdb.d
 
   keycloak:
     image: quay.io/keycloak/keycloak:21.0

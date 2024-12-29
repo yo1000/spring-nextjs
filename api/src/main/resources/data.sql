@@ -3,6 +3,18 @@
 INSERT INTO user_profile(
     "id", "username", "family_name", "given_name", "age", "gender", "profile"
 ) VALUES (
+    0,
+    'admin',
+    '',
+    'Admin',
+    0,
+    'Male',
+    ''
+);
+
+INSERT INTO user_profile(
+    "id", "username", "family_name", "given_name", "age", "gender", "profile"
+) VALUES (
     1,
     'squall',
     'Leonhart',

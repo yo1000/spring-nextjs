@@ -1,17 +1,23 @@
 package com.yo1000.api.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.yo1000.api.application.json.ValidatableObjectReader;
 import com.yo1000.api.domain.model.UserProfile;
 import com.yo1000.api.domain.repository.UserProfileRepository;
-import com.yo1000.api.presentation.UserProfilePatchRequest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -20,17 +26,25 @@ import java.util.Objects;
 @PreAuthorize("authenticated")
 public class UserProfileApplicationService {
     private final UserProfileRepository userProfileRepository;
+    private final ObjectMapper objectMapper;
 
-    public UserProfileApplicationService(UserProfileRepository userProfileRepository) {
+    public UserProfileApplicationService(UserProfileRepository userProfileRepository, ObjectMapper objectMapper) {
         this.userProfileRepository = userProfileRepository;
+        this.objectMapper = objectMapper;
     }
 
-    public Page<UserProfile> list(Pageable pageable) {
-        return userProfileRepository.findAll(pageable);
+    public Page<UserProfile> list(Pageable pageable) {;
+        return userProfileRepository.findAll(PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))));
     }
 
     public Page<UserProfile> search(String username, Pageable pageable) {
-        return userProfileRepository.findAllByUsernameStartingWith(username, pageable);
+        return userProfileRepository.findAllByUsernameStartingWith(username, PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))));
     }
 
     public UserProfile lookup(Integer id) {
@@ -52,56 +66,27 @@ public class UserProfileApplicationService {
         return userProfileRepository.save(userProfile);
     }
 
-    @PreAuthorize("hasAnyAuthority({'admin'}) || #username == authentication.name")
-    public UserProfile updateDiffByUsername(String username, UserProfilePatchRequest userProfilePatchRequest) {
+    // authentication: UserProfiledAuthenticationToken
+    // principal: UserProfile
+    @PreAuthorize("hasAnyAuthority({'admin'}) || principal.id == 1 || #username == authentication.name")
+    public UserProfile updateDiffByUsername(String username, String userProfileDiffJson) {
         UserProfile existedUserProfile = lookupByUsername(username);
 
-        userProfilePatchRequest.getId().ifPresent(id -> {
-            if (!Objects.equals(existedUserProfile.getId(), id)) {
-                throw new InvalidDataAccessResourceUsageException("User id is invalid: " + userProfilePatchRequest.getId());
+        try {
+            ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedUserProfile));
+            UserProfile updateUserProfile = reader.readValue(userProfileDiffJson);
+
+            if (!Objects.equals(existedUserProfile.getId(), updateUserProfile.getId())) {
+                throw new InvalidDataAccessResourceUsageException("User id is invalid: " + updateUserProfile.getId());
             }
-        });
 
-        if (userProfilePatchRequest.getUsername() != null) {
-            userProfilePatchRequest.getUsername()
-                    .map(s -> s.isBlank() ? null : s)
-                    .ifPresentOrElse(
-                            existedUserProfile::setUsername,
-                            () -> {
-                                throw new IllegalArgumentException("Username can not be null");
-                            });
+            if (updateUserProfile.getUsername() == null) {
+                throw new IllegalArgumentException("Username can not be null");
+            }
+
+            return userProfileRepository.save(existedUserProfile);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-
-        if (userProfilePatchRequest.getFamilyName() != null) {
-            userProfilePatchRequest.getFamilyName().ifPresentOrElse(
-                    existedUserProfile::setFamilyName,
-                    () -> existedUserProfile.setFamilyName(null));
-        }
-
-        if (userProfilePatchRequest.getGivenName() != null) {
-            userProfilePatchRequest.getGivenName().ifPresentOrElse(
-                    existedUserProfile::setGivenName,
-                    () -> existedUserProfile.setGivenName(null));
-        }
-
-        if (userProfilePatchRequest.getAge() != null) {
-            userProfilePatchRequest.getAge().ifPresentOrElse(
-                    existedUserProfile::setAge,
-                    () -> existedUserProfile.setAge(null));
-        }
-
-        if (userProfilePatchRequest.getGender() != null) {
-            userProfilePatchRequest.getGender().ifPresentOrElse(
-                    existedUserProfile::setGender,
-                    () -> existedUserProfile.setGender(null));
-        }
-
-        if (userProfilePatchRequest.getProfile() != null) {
-            userProfilePatchRequest.getProfile().ifPresentOrElse(
-                    existedUserProfile::setProfile,
-                    () -> existedUserProfile.setProfile(null));
-        }
-
-        return userProfileRepository.save(existedUserProfile);
     }
 }
