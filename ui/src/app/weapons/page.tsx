@@ -4,21 +4,18 @@ import {useEffect, useState} from "react";
 import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
-import Fetch from "@/utils/Fetch";
+import WeaponsApiClient from "@/utils/WeaponsApiClient";
 
 const Weapons = () => {
     const {user} = useAuth();
-    const [weapons, setWeapons] = useState<PagedData<any> | null>();
-    const [fetch, setFetch] = useState(new Fetch(user?.access_token));
+    const weaponsApiClient = new WeaponsApiClient(user?.access_token);
 
-    useEffect(() => {
-        setFetch(new Fetch(user?.access_token));
-    }, [user?.access_token]);
+    const [weapons, setWeapons] = useState<PagedData<any> | null>();
 
     useEffect(() => {
         const fetchWeapons = async () => {
             try {
-                setWeapons(await fetch.to(`http://localhost:8080/weapons`));
+                setWeapons(await weaponsApiClient.get());
             } catch (e) {
                 console.error(e);
             }
@@ -38,14 +35,14 @@ const Weapons = () => {
                 searchLabel={`Name`}
                 onSearch={async (v) => {
                     try {
-                        setWeapons(await fetch.to(`http://localhost:8080/weapons?name=${encodeURIComponent(v)}`));
+                        setWeapons(await weaponsApiClient.getByName(v));
                     } catch (e) {
                         console.error(e);
                     }
                 }}
                 onClickPage={async (keyword, page) => {
                     try {
-                        setWeapons(await fetch.to(`http://localhost:8080/weapons?name=${encodeURIComponent(keyword)}&page=${page}`));
+                        setWeapons(await weaponsApiClient.getByName(keyword, page));
                     } catch (e) {
                         console.error(e);
                     }

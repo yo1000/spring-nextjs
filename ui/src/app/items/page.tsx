@@ -4,17 +4,18 @@ import {useEffect, useState} from "react";
 import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
-import Fetch from "@/utils/Fetch";
+import ItemsApiClient from "@/utils/ItemsApiClient";
 
 const Items = () => {
     const {user} = useAuth();
+    const itemsApiClient = new ItemsApiClient(user?.access_token);
+
     const [items, setItems] = useState<PagedData<any> | null>();
-    const [fetch, setFetch] = useState(new Fetch());
 
     useEffect(() => {
         const fetchItems = async () => {
             try {
-                setItems(await fetch.to(`http://localhost:8080/items`));
+                setItems(await itemsApiClient.get());
             } catch (e) {
                 console.error(e);
             }
@@ -34,7 +35,7 @@ const Items = () => {
                 searchLabel={`Name`}
                 onSearch={async (v) => {
                     try {
-                        setItems(await fetch.to(`http://localhost:8080/items?name=${encodeURIComponent(v)}`));
+                        setItems(await itemsApiClient.getByName(v));
                     } catch (e) {
                         console.error(e);
                     }
@@ -42,7 +43,7 @@ const Items = () => {
                 }}
                 onClickPage={async (keyword, page) => {
                     try {
-                        setItems(await fetch.to(`http://localhost:8080/items?name=${encodeURIComponent(keyword)}&page=${page}`));
+                        setItems(await itemsApiClient.getByName(keyword, page));
                     } catch (e) {
                         console.error(e);
                     }

@@ -5,50 +5,29 @@ import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
 import Modal from "@/components/Modal";
-import Fetch from "@/utils/Fetch";
-
-type UserProfile = {
-    id: number;
-    username: string;
-    familyName: string;
-    givenName: string;
-    age: number;
-    gender: string;
-    profile: string;
-};
-
-type ItemInventoryData = {
-    id: number;
-    itemId: number;
-    name: string;
-    quantity: number;
-};
-
+import UserProfilesApiClient, {UserProfile} from "@/utils/UserProfilesApiClient";
 
 const UserProfiles = () => {
     const {user} = useAuth();
-    const [userProfiles, setUserProfiles] = useState<PagedData<UserProfile> | null>()
+    const userProfilesApiClient = new UserProfilesApiClient(user?.access_token);
+
+    const [userProfiles, setUserProfiles] = useState<PagedData<UserProfile> | null>();
     const [editModalShown, setEditModalShown] = useState(false);
     const [editModalData, setEditModalData] = useState<any | null | undefined>(null);
     const [addModalShown, setAddModalShown] = useState(false);
     const [addModalData, setAddModalData] = useState<any | null | undefined>(null);
-    const [fetch, setFetch] = useState(new Fetch(user?.access_token));
 
     useEffect(() => {
-        setFetch(new Fetch(user?.access_token));
-    }, [user?.access_token]);
-
-    useEffect(() => {
-        const fetchUsers = async () => {
+        const init = async () => {
             try {
-                setUserProfiles(await fetch.to(`http://localhost:8080/userProfiles`));
+                setUserProfiles(await userProfilesApiClient.get());
             } catch (e) {
                 console.error(e);
             }
         };
 
         try {
-            void fetchUsers();
+            void init();
         } catch (e) {
             console.error(e);
         }
@@ -61,7 +40,7 @@ const UserProfiles = () => {
                 searchLabel={`Username`}
                 onSearch={async (v) => {
                     try {
-                        setUserProfiles(await fetch.to(`http://localhost:8080/userProfiles?username=${encodeURIComponent(v)}`));
+                        setUserProfiles(await userProfilesApiClient.getByUsername(v));
                     } catch (e) {
                         console.error(e);
                     }
@@ -86,7 +65,7 @@ const UserProfiles = () => {
                 }}
                 onClickPage={async (keyword, page) => {
                     try {
-                        setUserProfiles(await fetch.to(`http://localhost:8080/userProfiles?username=${encodeURIComponent(keyword)}&page=${page}`));
+                        setUserProfiles(await userProfilesApiClient.getByUsername(keyword, page));
                     } catch (e) {
                         console.error(e);
                     }
@@ -97,42 +76,26 @@ const UserProfiles = () => {
                    readonly={[`id`, `username`]}
                    title={`Edit User Profile`}
                    onSave={async (data) => {
-                       const keepContent = (userProfiles?.content ?? [])
-                           .filter(d => data.id !== d.id);
-                       const newContentItem = {
-                           ...(((userProfiles?.content ?? [])).find(d => data.id === d.id)!),
-                           username: data.username,
-                           familyName: data.familyName,
-                           givenName: data.givenName,
-                           age: data.age,
-                           gender: data.gender,
-                           profile: data.profile,
-                       }
+                       const existedUserProfile = (userProfiles?.content ?? []).find(d => data.id === d.id);
 
-                       if (!newContentItem) {
+                       if (!existedUserProfile) {
                            return;
                        }
 
                        try {
-                           const updateUserProfile = {
-                               id: newContentItem.id,
-                               familyName: newContentItem.familyName,
-                               givenName: newContentItem.givenName,
-                               age: newContentItem.age,
-                               gender: newContentItem.gender,
-                               profile: newContentItem.profile,
-                           }
+                           const patchUserProfile: UserProfile = {
+                               id: existedUserProfile.id,
+                               familyName: data.familyName ?? existedUserProfile.familyName,
+                               givenName: data.givenName ?? existedUserProfile.givenName,
+                               age: data.age ?? existedUserProfile.age,
+                               gender: data.gender ?? existedUserProfile.gender,
+                               profile: data.profile ?? existedUserProfile.profile,
+                           } as UserProfile
 
-                           //?username=${encodeURIComponent(v)}
-                           await fetch.to(`http://localhost:8080/userProfiles?username=${encodeURIComponent(newContentItem.username)}`, {
-                               method: `PATCH`,
-                               headers: {
-                                   "Content-Type": "application/merge-patch+json",
-                               },
-                               body: JSON.stringify(updateUserProfile),
-                           });
+                           await userProfilesApiClient.patchByUsername(
+                               existedUserProfile.username, patchUserProfile);
 
-                           setUserProfiles(await fetch.to(`http://localhost:8080/userProfiles`));
+                           setUserProfiles(await userProfilesApiClient.get());
                            setEditModalShown(false);
                        } catch (e) {
                            console.error(e);
@@ -151,19 +114,15 @@ const UserProfiles = () => {
                        }
 
                        try {
-                           const newData = await fetch.to(`http://localhost:8080/userProfiles`, {
-                               method: `POST`,
-                               body: JSON.stringify({
-                                   id: data.id,
-                                   username: data.username,
-                                   familyName: data.familyName,
-                                   givenName: data.givenName,
-                                   age: data.age,
-                                   gender: data.gender,
-                                   profile: data.profile,
-                               }),
+                           const newData = await userProfilesApiClient.post({
+                               id: data.id,
+                               username: data.username,
+                               familyName: data.familyName,
+                               givenName: data.givenName,
+                               age: data.age,
+                               gender: data.gender,
+                               profile: data.profile,
                            });
-
                            setUserProfiles({
                                ...userProfiles,
                                content: [

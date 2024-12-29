@@ -9,14 +9,14 @@ export class FetchError extends Error {
     }
 }
 
-export default class Fetch {
+export default class ApiClient {
     private readonly accessToken?: string;
 
     constructor(accessToken?: string) {
         this.accessToken = accessToken;
     }
 
-    public async to(uri: string, options?: any) {
+    public async fetchTo(uri: string, options?: any) {
         console.log(this.accessToken);
 
         const authHeader = this.accessToken ? {"Authorization": `Bearer ${this.accessToken}`} : {};

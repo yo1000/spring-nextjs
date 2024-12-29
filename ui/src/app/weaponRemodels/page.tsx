@@ -4,14 +4,7 @@ import {useEffect, useState} from "react";
 import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
-import Fetch from "@/utils/Fetch";
-
-type WeaponRemodel = {
-    id: number;
-    price: number;
-    weapon: any;
-    materials: any[];
-};
+import WeaponRemodelsApiClient, {WeaponRemodel} from "@/utils/WeaponRemodelsApiClient";
 
 type WeaponRemodelData = {
     id: number;
@@ -22,17 +15,14 @@ type WeaponRemodelData = {
 
 const WeaponRemodels = () => {
     const {user} = useAuth();
-    const [weaponRemodels, setWeaponRemodels] = useState<PagedData<WeaponRemodel> | null>();
-    const [fetch, setFetch] = useState(new Fetch(user?.access_token));
+    const weaponRemodelsApiClient = new WeaponRemodelsApiClient(user?.access_token);
 
-    useEffect(() => {
-        setFetch(new Fetch(user?.access_token));
-    }, [user?.access_token]);
+    const [weaponRemodels, setWeaponRemodels] = useState<PagedData<WeaponRemodel> | null>();
 
     useEffect(() => {
         const fetchWeaponRemodels = async () => {
             try {
-                setWeaponRemodels(await fetch.to(`http://localhost:8080/weaponRemodels`));
+                setWeaponRemodels(await weaponRemodelsApiClient.get());
             } catch (e) {
                 console.error(e);
             }
@@ -60,14 +50,14 @@ const WeaponRemodels = () => {
                 searchLabel={`Name`}
                 onSearch={async (v) => {
                     try {
-                        setWeaponRemodels(await fetch.to(`http://localhost:8080/weaponRemodels?weaponName=${encodeURIComponent(v)}`));
+                        setWeaponRemodels(await weaponRemodelsApiClient.getByWeaponName(v));
                     } catch (e) {
                         console.error(e);
                     }
                 }}
                 onClickPage={async (keyword, page) => {
                     try {
-                        setWeaponRemodels(await fetch.to(`http://localhost:8080/weaponRemodels?weaponName=${encodeURIComponent(keyword)}&page=${page}`));
+                        setWeaponRemodels(await weaponRemodelsApiClient.getByWeaponName(keyword, page));
                     } catch (e) {
                         console.error(e);
                     }

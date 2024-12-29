@@ -5,13 +5,8 @@ import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
 import Modal from "@/components/Modal";
-import Fetch from "@/utils/Fetch";
-
-type ItemInventory = {
-    id: number;
-    item: any;
-    quantity: number;
-};
+import ItemInventoriesApiClient, {ItemInventory} from "@/utils/ItemInventoriesApiClient";
+import ItemsApiClient from "@/utils/ItemsApiClient";
 
 type ItemInventoryData = {
     id: number;
@@ -20,24 +15,21 @@ type ItemInventoryData = {
     quantity: number;
 };
 
-
 const ItemInventories = () => {
     const {user} = useAuth();
+    const itemsApiClient = new ItemsApiClient(user?.access_token);
+    const itemInventoriesApiClient = new ItemInventoriesApiClient(user?.access_token);
+
     const [itemInventories, setItemInventories] = useState<PagedData<ItemInventory> | null>();
     const [editModalShown, setEditModalShown] = useState(false);
     const [editModalData, setEditModalData] = useState<any | null | undefined>(null);
     const [addModalShown, setAddModalShown] = useState(false);
     const [addModalData, setAddModalData] = useState<any | null | undefined>(null);
-    const [fetch, setFetch] = useState(new Fetch(user?.access_token));
-
-    useEffect(() => {
-        setFetch(new Fetch(user?.access_token));
-    }, [user?.access_token]);
 
     useEffect(() => {
         const fetchItemInventories = async () => {
             try {
-                setItemInventories(await fetch.to(`http://localhost:8080/itemInventories`));
+                setItemInventories(await itemInventoriesApiClient.get());
             } catch (e) {
                 console.error(e);
             }
@@ -67,7 +59,7 @@ const ItemInventories = () => {
                 searchLabel={`Name`}
                 onSearch={async (v) => {
                     try {
-                        setItemInventories(await fetch.to(`http://localhost:8080/itemInventories?itemName=${encodeURIComponent(v)}`));
+                        setItemInventories(await itemInventoriesApiClient.getByItemName(v));
                     } catch (e) {
                         console.error(e);
                     }
@@ -89,7 +81,7 @@ const ItemInventories = () => {
                 }}
                 onClickPage={async (keyword, page) => {
                     try {
-                        setItemInventories(await fetch.to(`http://localhost:8080/itemInventories?itemName=${encodeURIComponent(keyword)}&page=${page}`));
+                        setItemInventories(await itemInventoriesApiClient.getByItemName(keyword, page));
                     } catch (e) {
                         console.error(e);
                     }
@@ -112,13 +104,7 @@ const ItemInventories = () => {
                        }
 
                        try {
-                           await fetch.to(`http://localhost:8080/itemInventories/${newContentItem.id}`, {
-                               method: `PATCH`,
-                               headers: {
-                                   "Content-Type": "application/merge-patch+json",
-                               },
-                               body: JSON.stringify(newContentItem),
-                           });
+                           await itemInventoriesApiClient.patchById(newContentItem.id, newContentItem);
 
                            setItemInventories({
                                ...itemInventories,
@@ -146,15 +132,12 @@ const ItemInventories = () => {
                        }
 
                        try {
-                           const item = await fetch.to(`http://localhost:8080/items/${data.itemId}`);
+                           const item = await itemsApiClient.getById(data.itemId);
 
-                           const newData = await fetch.to(`http://localhost:8080/itemInventories`, {
-                               method: `POST`,
-                               body: JSON.stringify({
-                                   id: data.id,
-                                   item: item,
-                                   quantity: data.quantity,
-                               }),
+                           const newData = await itemInventoriesApiClient.post({
+                               id: data.id,
+                               item: item,
+                               quantity: data.quantity,
                            });
 
                            setItemInventories({
