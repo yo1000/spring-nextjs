@@ -37,7 +37,8 @@ export default function RootLayout({
                 scope: "openid profile email",
                 userStore: new WebStorageStateStore({store: window.localStorage}),
                 // loadUserInfo: true,
-                accessTokenExpiringNotificationTimeInSeconds: 30,
+                // How many seconds before expiration should the access token be refreshed?
+                accessTokenExpiringNotificationTimeInSeconds: 10,
             });
         };
 
