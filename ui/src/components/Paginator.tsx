@@ -12,7 +12,7 @@ type PaginatorProps = {
     onClick: (page: number) => void;
 };
 
-export default function Paginator({empty, first, last, page, size, totalPages, onClick}: PaginatorProps) {
+export default function Paginator({empty, first, last, page = 0, size, totalPages = 1, onClick}: PaginatorProps) {
     const initArray = (from: number, to: number) => {
         const a = new Array<number>();
         for (let i = from; i <= to; i++) {
@@ -22,7 +22,7 @@ export default function Paginator({empty, first, last, page, size, totalPages, o
     };
 
     const createPages = (from: number, to: number, page: number, totalPages: number) => {
-        const firstArray = initArray(0, 2);
+        const firstArray = initArray(0, Math.min(2, totalPages - 1));
         const middleArray = initArray(Math.max(0, page - 2), Math.min(page + 2, totalPages - 1));
         const lastArray = initArray(totalPages - 3, totalPages - 1);
 
@@ -55,7 +55,7 @@ export default function Paginator({empty, first, last, page, size, totalPages, o
         <nav className="flex items-center justify-between border-t border-neutral-200 overflow-x-auto px-4 sm:px-0 -mx-4 sm:-mx-6 lg:-mx-8">
             <div className="flex flex-1 overflow-x-auto -mx4 sm:mx-6 lg:mx-8">
                 <div className="-mt-px flex w-0 flex-1">
-                    {first
+                    {pages?.length <= 1 || first
                         ? <></>
                         : (
                             <button className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
@@ -87,7 +87,7 @@ export default function Paginator({empty, first, last, page, size, totalPages, o
                     ))}
                 </div>
                 <div className="-mt-px flex w-0 flex-1 justify-end">
-                    {last
+                    {pages?.length <= 1 || last
                         ? <></>
                         : (
                             <button className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"

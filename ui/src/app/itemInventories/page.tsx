@@ -58,14 +58,6 @@ const ItemInventories = () => {
                         }))
                         ?.sort((a, b) => (a.id - b.id))
                 } as PagedData<ItemInventoryData>}
-                searchLabel={`Name`}
-                onSearch={async (v) => {
-                    try {
-                        setItemInventories(await itemInventoriesApiClient.getByItemName(v));
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }}
                 onAdd={() => {
                     setAddModalData({
                         id: ``,

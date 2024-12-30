@@ -699,8 +699,8 @@ curl -s \
 
 echo "User created
 
-| ID | Username | Password     | Email             | Role                               |
-|----|----------|--------------|-------------------|------------------------------------|
+| Username | Password     | Email             | Role                               |
+|----------|--------------|-------------------|------------------------------------|
 | admin    | admin        |                   | admin                              |
 | squall   | Squall-1234  | squall@localhost  | item:write, itemInventory:write,   |
 |          |              |                   | weapon:write, weaponRemodel:write, |
@@ -708,10 +708,9 @@ echo "User created
 | zell     | Zell-1234    | zell@localhost    | item:read, itemInventory:read,     |
 |          |              |                   | weapon:read, weaponRemodel:read,   |
 |          |              |                   | userProfile:read                   |
-| irvine   | Irvine-1234  | irvine@localhost    | item:read, itemInventory:read,     |
+| irvine   | Irvine-1234  | irvine@localhost  | item:read, itemInventory:read,     |
 |          |              |                   | weapon:read, weaponRemodel:read,   |
 |          |              |                   | userProfile:read                   |
-| irvine   | Irvine-1234  | irvine@localhost  |                                    |
 | quistis  | Quistis-1234 | quistis@localhost |                                    |
 | rinoa    | Rinoa-1234   | rinoa@localhost   |                                    |
 | selphie  | Selphie-1234 | selphie@localhost |                                    |
