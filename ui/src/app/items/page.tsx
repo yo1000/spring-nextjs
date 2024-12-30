@@ -7,8 +7,10 @@ import {useAuth} from "@/contexts/AuthContext";
 import ItemsApiClient from "@/utils/ItemsApiClient";
 
 const Items = () => {
+    const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
+
     const {user} = useAuth();
-    const itemsApiClient = new ItemsApiClient(user?.access_token);
+    const itemsApiClient = new ItemsApiClient(user?.access_token, apiBaseUri);
 
     const [items, setItems] = useState<PagedData<any> | null>();
 

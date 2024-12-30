@@ -7,8 +7,10 @@ import {useAuth} from "@/contexts/AuthContext";
 import WeaponsApiClient from "@/utils/WeaponsApiClient";
 
 const Weapons = () => {
+    const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
+
     const {user} = useAuth();
-    const weaponsApiClient = new WeaponsApiClient(user?.access_token);
+    const weaponsApiClient = new WeaponsApiClient(user?.access_token, apiBaseUri);
 
     const [weapons, setWeapons] = useState<PagedData<any> | null>();
 

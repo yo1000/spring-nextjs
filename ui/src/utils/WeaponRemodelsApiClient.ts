@@ -12,23 +12,25 @@ export type WeaponRemodel = {
 
 export default class WeaponRemodelsApiClient {
     private readonly apiClient: ApiClient
+    private readonly baseUri: string
 
-    constructor(accessToken?: string) {
+    constructor(accessToken: string | undefined, baseUri: string | undefined) {
         this.apiClient = new ApiClient(accessToken);
+        this.baseUri = baseUri ?? ``;
     }
 
-    public async get(page?: number): Promise<PagedData<WeaponRemodel> | null> {
+    public async get(page?: number): Promise<PagedData<WeaponRemodel> | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/weaponRemodels${page ? `?page=${page}` : ``}`);
+            `${this.baseUri}/weaponRemodels${page ? `?page=${page}` : ``}`);
     }
 
-    public async getById(id: number): Promise<WeaponRemodel | null> {
+    public async getById(id: number): Promise<WeaponRemodel | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/weaponRemodels/${id}`);
+            `${this.baseUri}/weaponRemodels/${id}`);
     }
 
-    public async getByWeaponName(weaponName: string, page?: number): Promise<PagedData<WeaponRemodel> | null> {
+    public async getByWeaponName(weaponName: string, page?: number): Promise<PagedData<WeaponRemodel> | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/weaponRemodels?weaponName=${encodeURIComponent(weaponName)}${page ? `&page=${page}` : ``}`);
+            `${this.baseUri}/weaponRemodels?weaponName=${encodeURIComponent(weaponName)}${page ? `&page=${page}` : ``}`);
     }
 }

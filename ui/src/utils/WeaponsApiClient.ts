@@ -12,23 +12,25 @@ export type Weapon = {
 
 export default class WeaponsApiClient {
     private readonly apiClient: ApiClient
+    private readonly baseUri: string
 
-    constructor(accessToken?: string) {
+    constructor(accessToken: string | undefined, baseUri: string | undefined) {
         this.apiClient = new ApiClient(accessToken);
+        this.baseUri = baseUri ?? ``;
     }
 
-    public async get(page?: number): Promise<PagedData<Weapon> | null> {
+    public async get(page?: number): Promise<PagedData<Weapon> | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/weapons${page ? `?page=${page}` : ``}`);
+            `${this.baseUri}/weapons${page ? `?page=${page}` : ``}`);
     }
 
-    public async getById(id: number): Promise<Weapon | null> {
+    public async getById(id: number): Promise<Weapon | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/weapons/${id}`);
+            `${this.baseUri}/weapons/${id}`);
     }
 
-    public async getByName(name: string, page?: number): Promise<PagedData<Weapon> | null> {
+    public async getByName(name: string, page?: number): Promise<PagedData<Weapon> | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/weapons?name=${encodeURIComponent(name)}${page ? `&page=${page}` : ``}`);
+            `${this.baseUri}/weapons?name=${encodeURIComponent(name)}${page ? `&page=${page}` : ``}`);
     }
 }

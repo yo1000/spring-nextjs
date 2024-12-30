@@ -8,8 +8,10 @@ import Modal from "@/components/Modal";
 import UserProfilesApiClient, {UserProfile} from "@/utils/UserProfilesApiClient";
 
 const UserProfiles = () => {
+    const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
+
     const {user} = useAuth();
-    const userProfilesApiClient = new UserProfilesApiClient(user?.access_token);
+    const userProfilesApiClient = new UserProfilesApiClient(user?.access_token, apiBaseUri);
 
     const [userProfiles, setUserProfiles] = useState<PagedData<UserProfile> | null>();
     const [editModalShown, setEditModalShown] = useState(false);

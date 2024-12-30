@@ -14,8 +14,10 @@ type WeaponRemodelData = {
 };
 
 const WeaponRemodels = () => {
+    const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
+
     const {user} = useAuth();
-    const weaponRemodelsApiClient = new WeaponRemodelsApiClient(user?.access_token);
+    const weaponRemodelsApiClient = new WeaponRemodelsApiClient(user?.access_token, apiBaseUri);
 
     const [weaponRemodels, setWeaponRemodels] = useState<PagedData<WeaponRemodel> | null>();
 

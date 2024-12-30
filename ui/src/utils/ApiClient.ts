@@ -10,15 +10,13 @@ export class FetchError extends Error {
 }
 
 export default class ApiClient {
-    private readonly accessToken?: string;
+    private readonly accessToken: string | undefined;
 
-    constructor(accessToken?: string) {
+    constructor(accessToken: string | undefined) {
         this.accessToken = accessToken;
     }
 
     public async fetchTo(uri: string, options?: any) {
-        console.log(this.accessToken);
-
         const authHeader = this.accessToken ? {"Authorization": `Bearer ${this.accessToken}`} : {};
         const headers = options && options.headers ? {
             "Content-Type": "application/json",

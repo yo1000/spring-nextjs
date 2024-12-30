@@ -16,9 +16,11 @@ type ItemInventoryData = {
 };
 
 const ItemInventories = () => {
+    const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
+
     const {user} = useAuth();
-    const itemsApiClient = new ItemsApiClient(user?.access_token);
-    const itemInventoriesApiClient = new ItemInventoriesApiClient(user?.access_token);
+    const itemsApiClient = new ItemsApiClient(user?.access_token, apiBaseUri);
+    const itemInventoriesApiClient = new ItemInventoriesApiClient(user?.access_token, apiBaseUri);
 
     const [itemInventories, setItemInventories] = useState<PagedData<ItemInventory> | null>();
     const [editModalShown, setEditModalShown] = useState(false);

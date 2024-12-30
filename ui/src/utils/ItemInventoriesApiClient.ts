@@ -11,29 +11,31 @@ export type ItemInventory = {
 
 export default class ItemInventoriesApiClient {
     private readonly apiClient: ApiClient
+    private readonly baseUri: string
 
-    constructor(accessToken?: string) {
+    constructor(accessToken: string | undefined, baseUri: string | undefined) {
         this.apiClient = new ApiClient(accessToken);
+        this.baseUri = baseUri ?? ``;
     }
 
-    public async get(page?: number): Promise<PagedData<ItemInventory> | null> {
+    public async get(page?: number): Promise<PagedData<ItemInventory> | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/itemInventories${page ? `?page=${page}` : ``}`);
+            `${this.baseUri}/itemInventories${page ? `?page=${page}` : ``}`);
     }
 
-    public async getById(id: number): Promise<ItemInventory | null> {
+    public async getById(id: number): Promise<ItemInventory | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/itemInventories/${id}`);
+            `${this.baseUri}/itemInventories/${id}`);
     }
 
-    public async getByItemName(itemName: string, page?: number): Promise<PagedData<ItemInventory> | null> {
+    public async getByItemName(itemName: string, page?: number): Promise<PagedData<ItemInventory> | undefined> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/itemInventories?itemName=${encodeURIComponent(itemName)}${page ? `&page=${page}` : ``}`);
+            `${this.baseUri}/itemInventories?itemName=${encodeURIComponent(itemName)}${page ? `&page=${page}` : ``}`);
     }
 
     public async post(itemInventory: ItemInventory): Promise<ItemInventory> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/itemInventories`, {
+            `${this.baseUri}/itemInventories`, {
                 method: `POST`,
                 body: JSON.stringify(itemInventory),
             });
@@ -41,7 +43,7 @@ export default class ItemInventoriesApiClient {
 
     public async patchById(id: number, itemInventory: ItemInventory): Promise<ItemInventory> {
         return await this.apiClient.fetchTo(
-            `http://localhost:8080/itemInventories/${id}`, {
+            `${this.baseUri}/itemInventories/${id}`, {
                 method: `PATCH`,
                 headers: {
                     "Content-Type": "application/merge-patch+json",

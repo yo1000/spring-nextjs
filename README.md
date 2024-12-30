@@ -85,6 +85,7 @@ Start frontend module
 ```bash
 (cd ui; \
 npm install;
+NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
 NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
 NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
 NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
@@ -97,6 +98,7 @@ Start frontend module as hot-reload
 ```bash
 (cd ui; \
 npm install;
+NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
 NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
 NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
 NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
