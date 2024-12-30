@@ -25,6 +25,7 @@ export const AuthProvider = ({children, oidcConfig}: { children: ReactNode, oidc
             userManager.events.addUserLoaded(handleUserLoaded);
             userManager.events.addUserUnloaded(handleUserUnloaded);
             userManager.events.addSilentRenewError(handleUserUnloaded);
+            userManager.events.addAccessTokenExpired(handleUserUnloaded);
             setEventAdded(true);
         }
 

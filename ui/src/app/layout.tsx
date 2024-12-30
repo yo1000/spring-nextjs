@@ -27,7 +27,7 @@ export default function RootLayout({
     const [oidcConfig, setOidcConfig] = useState<UserManagerSettings | null>(null);
 
     useEffect(() => {
-        const fetchOidcConfig = async () => {
+        const setupOidcConfig = async () => {
             setOidcConfig({
                 authority: process.env.NEXT_PUBLIC_OIDC_AUTHORITY as string,
                 client_id: process.env.NEXT_PUBLIC_OIDC_CLIENT_ID as string,
@@ -42,7 +42,7 @@ export default function RootLayout({
             });
         };
 
-        void fetchOidcConfig();
+        void setupOidcConfig();
     }, []);
 
     return (
