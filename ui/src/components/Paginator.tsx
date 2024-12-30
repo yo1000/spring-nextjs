@@ -52,17 +52,17 @@ export default function Paginator({empty, first, last, page, size, totalPages, o
             : null));
 
     return (
-        <nav className="flex items-center justify-between border-t border-gray-200 overflow-x-auto px-4 sm:px-0 -mx-4 sm:-mx-6 lg:-mx-8">
+        <nav className="flex items-center justify-between border-t border-neutral-200 overflow-x-auto px-4 sm:px-0 -mx-4 sm:-mx-6 lg:-mx-8">
             <div className="flex flex-1 overflow-x-auto -mx4 sm:mx-6 lg:mx-8">
                 <div className="-mt-px flex w-0 flex-1">
                     {first
                         ? <></>
                         : (
-                            <button className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                            <button className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
                                 onClick={() => {
                                     onClick(page - 1);
                                 }}>
-                                <ArrowLongLeftIcon className="mr-3 h-5 w-5 text-gray-400" aria-hidden="true"/>
+                                <ArrowLongLeftIcon className="mr-3 h-5 w-5 text-neutral-400" aria-hidden="true"/>
                                 Previous
                             </button>
                         )
@@ -72,15 +72,15 @@ export default function Paginator({empty, first, last, page, size, totalPages, o
                     {pages.map((p, index) => (
                         p ? (
                             <button key={`page-${index}-${p.page}`} className={p.current
-                                ? `inline-flex items-center border-t-2 border-indigo-500 px-4 pt-4 text-sm font-medium text-indigo-600`
-                                : `inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700`}
+                                ? `inline-flex items-center border-t-2 border-primary-500 px-4 pt-4 text-sm font-medium text-primary-600`
+                                : `inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700`}
                                     onClick={() => {
                                         onClick(p!.page);
                                     }}>
                                 {p.pageLabel}
                             </button>
                         ) : (
-                            <span key={`page-${index}`} className="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500">
+                            <span key={`page-${index}`} className="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-neutral-500">
                                 ...
                             </span>
                         )
@@ -90,12 +90,12 @@ export default function Paginator({empty, first, last, page, size, totalPages, o
                     {last
                         ? <></>
                         : (
-                            <button className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                            <button className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-neutral-500 hover:border-neutral-300 hover:text-neutral-700"
                                     onClick={() => {
                                         onClick(page + 1);
                                     }}>
                                 Next
-                                <ArrowLongRightIcon className="ml-3 h-5 w-5 text-gray-400" aria-hidden="true"/>
+                                <ArrowLongRightIcon className="ml-3 h-5 w-5 text-neutral-400" aria-hidden="true"/>
                             </button>
                         )
                     }

@@ -46,7 +46,7 @@ export default function RootLayout({
     }, []);
 
     return (
-        <html lang="en" className={`h-full bg-gray-100`}>
+        <html lang="en" className={`h-full bg-neutral-100`}>
         <body className={`h-full ${noTofuEmoji.className} ${noTofuJp.className} ${noTofu.className}`}>
         {oidcConfig
             ? <AuthProvider oidcConfig={oidcConfig}>

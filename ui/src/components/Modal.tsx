@@ -52,7 +52,7 @@ export default function Modal({open, data, readonly, title, saveLabel = "Save", 
         <Dialog className="relative z-10" open={open} onClose={() => {}}>
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"/>
+                className="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"/>
 
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div className="flex min-h-full items-end justify-center p-4 text-center items-center sm:items-center sm:p-0">
@@ -61,7 +61,7 @@ export default function Modal({open, data, readonly, title, saveLabel = "Save", 
                         className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 w-full sm:w-full sm:max-w-3xl sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
                         <div className="sm:items-start">
                             <div className="mt-3 text-center sm:mt-0 sm:text-left">
-                                <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                <DialogTitle as="h3" className="text-base font-semibold leading-6 text-neutral-900">
                                     {title}
                                 </DialogTitle>
                                 <div className="mt-2">
@@ -69,7 +69,7 @@ export default function Modal({open, data, readonly, title, saveLabel = "Save", 
                                         {editData?.map((datum, index) => (
                                             <div key={`modal-${title}-${index}-${datum.name}`} className="sm:col-span-3">
                                                 <label htmlFor={`modal-${title}-${index}-${datum.name}`}
-                                                       className="block text-sm font-medium leading-6 text-gray-900">
+                                                       className="block text-sm font-medium leading-6 text-neutral-900">
                                                     {datum.name}
                                                 </label>
                                                 <div className="mt-2">
@@ -99,7 +99,7 @@ export default function Modal({open, data, readonly, title, saveLabel = "Save", 
                                                                     return aa.order - bb.order;
                                                                 }));
                                                             }}
-                                                            className="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                            className="block w-full rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                                                         />}
                                                 </div>
                                             </div>
@@ -112,7 +112,7 @@ export default function Modal({open, data, readonly, title, saveLabel = "Save", 
                         <div className="mt-6 sm:mt-6 sm:flex sm:flex-row-reverse">
                             <button
                                 type="button"
-                                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+                                className="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 sm:ml-3 sm:w-auto"
                                 onClick={() => {
                                     const saveData: any = {};
 
@@ -126,7 +126,7 @@ export default function Modal({open, data, readonly, title, saveLabel = "Save", 
                             </button>
                             <button
                                 type="button"
-                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 sm:mt-0 sm:w-auto"
                                 onClick={onCancel}
                                 data-autofocus>
                                 {cancelLabel}
