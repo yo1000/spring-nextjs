@@ -26,7 +26,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Configure your color palette here
         neutral: generateShades(`#838383`),
         primary: generateShades(`#c4231b`),
         secondary: generateShades(`#ef9f00`),
@@ -43,13 +42,3 @@ const config: Config = {
 } as Config;
 
 export default config;
-
-// /** @type {import('tailwindcss').Config} */
-// module.exports = {
-//   theme: {
-//     colors: {
-//       // Configure your color palette here
-//       Indigo: `#666666`
-//     }
-//   }
-// }
