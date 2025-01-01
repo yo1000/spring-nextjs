@@ -52,11 +52,12 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults());
 
         if (appProps.getSecurity().getIdp().equals(ApplicationProperties.SecurityProperties.IDP_KEYCLOAK)) {
-                httpSecurity.oauth2ResourceServer(config -> config
-                        .jwt(configurer -> configurer.jwtAuthenticationConverter(
-                                new UserProfiledAuthenticationConverter(userProfileRepos))));
+            httpSecurity.oauth2ResourceServer(config -> config
+                    .jwt(configurer -> configurer.jwtAuthenticationConverter(
+                            new UserProfiledAuthenticationConverter(userProfileRepos))));
         } else {
-            httpSecurity.oauth2ResourceServer(Customizer.withDefaults());
+            httpSecurity.oauth2ResourceServer(config -> config
+                    .jwt(configurer -> configurer.jwtAuthenticationConverter(source -> null)));
         }
 
         return httpSecurity.build();

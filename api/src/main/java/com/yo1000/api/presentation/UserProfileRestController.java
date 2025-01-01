@@ -1,9 +1,6 @@
 package com.yo1000.api.presentation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.yo1000.api.application.UserProfileApplicationService;
-import com.yo1000.api.application.json.ValidatableObjectReader;
 import com.yo1000.api.domain.model.UserProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
