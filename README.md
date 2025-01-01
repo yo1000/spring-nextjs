@@ -55,7 +55,13 @@ ls ui/out
 How to test
 --------------------------------------------------------------------------------
 
-Test frontend modules
+Test server modules
+
+```bash
+./mvnw clean test
+```
+
+Test frontend module
 
 ```bash
 (cd ui;
@@ -63,7 +69,7 @@ npm install;
 npm run test)
 ```
 
-Test frontend modules with `watch` option
+Test frontend module with `watch` option
 
 ```bash
 (cd ui;
