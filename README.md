@@ -40,7 +40,7 @@ Build server modules as development version
 Build frontend module
 
 ```bash
-(cd ui; \
+(cd ui;
 npm install;
 NEXT_PUBLIC_OIDC_AUTHORITY=${OIDC_ISSUER_URI} \
 NEXT_PUBLIC_OIDC_CLIENT_ID=${OIDC_CLIENT_ID} \
@@ -49,6 +49,26 @@ NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=${OIDC_POST_SIGNOUT_URI} \
 npm run build)
 
 ls ui/out
+```
+
+
+How to test
+--------------------------------------------------------------------------------
+
+Test frontend modules
+
+```bash
+(cd ui;
+npm install;
+npm run test)
+```
+
+Test frontend modules with `watch` option
+
+```bash
+(cd ui;
+npm install;
+npm run test-watch)
 ```
 
 
