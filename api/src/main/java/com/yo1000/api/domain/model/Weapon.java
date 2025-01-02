@@ -3,6 +3,8 @@ package com.yo1000.api.domain.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Weapon {
     @Id
@@ -50,5 +52,19 @@ public class Weapon {
 
     public void setHit(Integer hit) {
         this.hit = hit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Weapon weapon)) return false;
+        return Objects.equals(id, weapon.id)
+                && Objects.equals(name, weapon.name)
+                && Objects.equals(str, weapon.str)
+                && Objects.equals(hit, weapon.hit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, str, hit);
     }
 }

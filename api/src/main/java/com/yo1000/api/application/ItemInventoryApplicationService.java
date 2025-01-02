@@ -1,24 +1,32 @@
 package com.yo1000.api.application;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.yo1000.api.application.json.ValidatableObjectReader;
 import com.yo1000.api.domain.model.ItemInventory;
 import com.yo1000.api.domain.repository.ItemInventoryRepository;
-import com.yo1000.api.presentation.ItemInventoryPatchRequest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @Transactional
 @PreAuthorize("hasAnyAuthority({'admin', 'spring-nextjs.itemInventory:write', 'spring-nextjs.itemInventory:read'})")
 public class ItemInventoryApplicationService {
     private final ItemInventoryRepository itemInventoryRepository;
+    private final ObjectMapper objectMapper;
 
-    public ItemInventoryApplicationService(ItemInventoryRepository itemInventoryRepository) {
+    public ItemInventoryApplicationService(ItemInventoryRepository itemInventoryRepository, ObjectMapper objectMapper) {
         this.itemInventoryRepository = itemInventoryRepository;
+        this.objectMapper = objectMapper;
     }
 
     public Page<ItemInventory> list(Pageable pageable) {
@@ -69,40 +77,46 @@ public class ItemInventoryApplicationService {
     }
 
     @PreAuthorize("hasAnyAuthority({'admin', 'spring-nextjs.itemInventory:write'})")
-    public ItemInventory updateDiff(Integer id, ItemInventoryPatchRequest itemInventoryPatch) {
+    public ItemInventory updateDiff(Integer id, String itemInventoryDiffJson) {
         ItemInventory existedItemInventory = lookup(id);
 
-        if (itemInventoryPatch.getItem() != null) {
-            itemInventoryPatch.getItem().ifPresentOrElse(
-                    existedItemInventory::setItem,
-                    () -> existedItemInventory.setItem(null));
-        }
+        try {
+            ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedItemInventory));
+            ItemInventory updateItemInventory = reader.readValue(itemInventoryDiffJson);
 
-        if (itemInventoryPatch.getQuantity() != null) {
-            itemInventoryPatch.getQuantity().ifPresentOrElse(
-                    existedItemInventory::setQuantity,
-                    () -> existedItemInventory.setQuantity(null));
-        }
+            if (!Objects.equals(existedItemInventory.getId(), updateItemInventory.getId())) {
+                throw new InvalidDataAccessResourceUsageException("ItemInventory id is invalid: " + updateItemInventory.getId());
+            }
 
-        return itemInventoryRepository.save(existedItemInventory);
+            if (updateItemInventory.getItem() == null) {
+                throw new IllegalArgumentException("itemId can not be null");
+            }
+
+            return itemInventoryRepository.save(existedItemInventory);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PreAuthorize("hasAnyAuthority({'admin', 'spring-nextjs.itemInventory:write'})")
-    public ItemInventory updateDiffByItemId(Integer itemId, ItemInventoryPatchRequest itemInventoryPatch) {
+    public ItemInventory updateDiffByItemId(Integer itemId, String itemInventoryDiffJson) {
         ItemInventory existedItemInventory = lookupByItemId(itemId);
 
-        if (itemInventoryPatch.getItem() != null) {
-            itemInventoryPatch.getItem().ifPresentOrElse(
-                    existedItemInventory::setItem,
-                    () -> existedItemInventory.setItem(null));
-        }
+        try {
+            ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedItemInventory));
+            ItemInventory updateItemInventory = reader.readValue(itemInventoryDiffJson);
 
-        if (itemInventoryPatch.getQuantity() != null) {
-            itemInventoryPatch.getQuantity().ifPresentOrElse(
-                    existedItemInventory::setQuantity,
-                    () -> existedItemInventory.setQuantity(null));
-        }
+            if (!Objects.equals(existedItemInventory.getId(), updateItemInventory.getId())) {
+                throw new InvalidDataAccessResourceUsageException("ItemInventory id is invalid: " + updateItemInventory.getId());
+            }
 
-        return itemInventoryRepository.save(existedItemInventory);
+            if (updateItemInventory.getItem() == null) {
+                throw new IllegalArgumentException("itemId can not be null");
+            }
+
+            return itemInventoryRepository.save(existedItemInventory);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

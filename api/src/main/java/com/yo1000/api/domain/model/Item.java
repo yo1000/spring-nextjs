@@ -3,6 +3,8 @@ package com.yo1000.api.domain.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Item {
     @Id
@@ -50,5 +52,19 @@ public class Item {
 
     public void setSellPrice(Integer sellPrice) {
         this.sellPrice = sellPrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Item item)) return false;
+        return Objects.equals(id, item.id)
+                && Objects.equals(name, item.name)
+                && Objects.equals(price, item.price)
+                && Objects.equals(sellPrice, item.sellPrice);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, price, sellPrice);
     }
 }

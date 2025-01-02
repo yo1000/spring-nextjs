@@ -40,16 +40,16 @@ public class ItemInventoryRestController {
     @PatchMapping(path = "/{id}", consumes = "application/merge-patch+json")
     public ItemInventory patch(
             @PathVariable("id") Integer id,
-            @RequestBody ItemInventoryPatchRequest itemInventoryPatchRequest
+            @RequestBody String itemInventoryDiffJson
     ) {
-        return itemInventoryApplicationService.updateDiff(id, itemInventoryPatchRequest);
+        return itemInventoryApplicationService.updateDiff(id, itemInventoryDiffJson);
     }
 
     @PatchMapping(consumes = "application/merge-patch+json")
     public ItemInventory patchByItemId(
             @RequestParam("itemId") Integer itemId,
-            @RequestBody ItemInventoryPatchRequest itemInventoryPatchRequest
+            @RequestBody String itemInventoryDiffJson
     ) {
-        return itemInventoryApplicationService.updateDiffByItemId(itemId, itemInventoryPatchRequest);
+        return itemInventoryApplicationService.updateDiffByItemId(itemId, itemInventoryDiffJson);
     }
 }

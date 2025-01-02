@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
+import java.util.Objects;
+
 @Entity
 public class WeaponMaterial {
     @Id
@@ -54,5 +56,19 @@ public class WeaponMaterial {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof WeaponMaterial that)) return false;
+        return Objects.equals(id, that.id)
+                && Objects.equals(weapon, that.weapon)
+                && Objects.equals(item, that.item)
+                && Objects.equals(quantity, that.quantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, weapon, item, quantity);
     }
 }

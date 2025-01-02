@@ -6,6 +6,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class WeaponRemodel {
@@ -56,5 +57,19 @@ public class WeaponRemodel {
 
     public void setMaterials(List<WeaponMaterial> materials) {
         this.materials = materials;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof WeaponRemodel that)) return false;
+        return Objects.equals(id, that.id)
+                && Objects.equals(weapon, that.weapon)
+                && Objects.equals(price, that.price)
+                && Objects.equals(materials, that.materials);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, weapon, price, materials);
     }
 }

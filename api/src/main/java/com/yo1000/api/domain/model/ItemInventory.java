@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 
+import java.util.Objects;
+
 @Entity
 public class ItemInventory {
     @Id
@@ -58,5 +60,18 @@ public class ItemInventory {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ItemInventory that)) return false;
+        return Objects.equals(id, that.id)
+                && Objects.equals(item, that.item)
+                && Objects.equals(quantity, that.quantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, item, quantity);
     }
 }
