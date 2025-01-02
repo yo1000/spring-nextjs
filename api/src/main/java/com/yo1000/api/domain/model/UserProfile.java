@@ -3,6 +3,8 @@ package com.yo1000.api.domain.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class UserProfile {
     @Id
@@ -80,5 +82,22 @@ public class UserProfile {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof UserProfile that)) return false;
+        return Objects.equals(id, that.id)
+                && Objects.equals(username, that.username)
+                && Objects.equals(familyName, that.familyName)
+                && Objects.equals(givenName, that.givenName)
+                && Objects.equals(age, that.age)
+                && Objects.equals(gender, that.gender)
+                && Objects.equals(profile, that.profile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, familyName, givenName, age, gender, profile);
     }
 }
