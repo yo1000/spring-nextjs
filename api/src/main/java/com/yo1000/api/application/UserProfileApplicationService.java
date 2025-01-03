@@ -32,7 +32,7 @@ public class UserProfileApplicationService {
         this.objectMapper = objectMapper;
     }
 
-    public Page<UserProfile> list(Pageable pageable) {;
+    public Page<UserProfile> list(Pageable pageable) {
         return userProfileRepository.findAll(PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),

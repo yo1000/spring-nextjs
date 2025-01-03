@@ -109,11 +109,9 @@ public class SecurityConfig {
                                 .map(name -> entry.getKey() + "." + name))
                         .toList();
 
-                Collection<GrantedAuthority> keycloakRoles = Stream.concat(realmRoles.stream(), resourceRoles.stream())
+                return Stream.concat(realmRoles.stream(), resourceRoles.stream())
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toCollection(ArrayList::new));
-
-                return keycloakRoles;
             });
 
             AbstractAuthenticationToken authenticationToken = jwtConverter.convert(source);
