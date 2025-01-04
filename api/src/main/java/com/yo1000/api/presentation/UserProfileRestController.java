@@ -2,14 +2,17 @@ package com.yo1000.api.presentation;
 
 import com.yo1000.api.application.UserProfileApplicationService;
 import com.yo1000.api.domain.model.UserProfile;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/userProfiles")
+@Validated
 public class UserProfileRestController {
     private final UserProfileApplicationService userProfileApplicationService;
 
@@ -39,7 +42,7 @@ public class UserProfileRestController {
 
     @PostMapping
     public UserProfile post(
-            @RequestBody UserProfile userProfile
+            @RequestBody @Valid UserProfile userProfile
     ) {
         return userProfileApplicationService.create(userProfile);
     }

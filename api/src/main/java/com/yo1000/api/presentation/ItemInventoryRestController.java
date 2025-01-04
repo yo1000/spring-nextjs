@@ -2,14 +2,17 @@ package com.yo1000.api.presentation;
 
 import com.yo1000.api.application.ItemInventoryApplicationService;
 import com.yo1000.api.domain.model.ItemInventory;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/itemInventories")
+@Validated
 public class ItemInventoryRestController {
     private final ItemInventoryApplicationService itemInventoryApplicationService;
 
@@ -32,7 +35,7 @@ public class ItemInventoryRestController {
 
     @PostMapping
     public ItemInventory post(
-            @RequestBody ItemInventory itemInventory
+            @RequestBody @Valid ItemInventory itemInventory
     ) {
         return itemInventoryApplicationService.create(itemInventory);
     }

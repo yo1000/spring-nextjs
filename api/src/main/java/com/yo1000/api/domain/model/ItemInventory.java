@@ -3,6 +3,8 @@ package com.yo1000.api.domain.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 
 import java.util.Objects;
 
@@ -12,6 +14,8 @@ public class ItemInventory {
     private Integer id;
     @OneToOne
     private Item item;
+    @Min(0)
+    @Max(100)
     private Integer quantity;
 
     public ItemInventory() {}

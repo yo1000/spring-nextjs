@@ -4,12 +4,14 @@ import com.yo1000.api.application.ItemApplicationService;
 import com.yo1000.api.domain.model.Item;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/items")
+@Validated
 public class ItemRestController {
     private final ItemApplicationService itemApplicationService;
 
