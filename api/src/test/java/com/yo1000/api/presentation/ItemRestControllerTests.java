@@ -13,7 +13,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import java.util.List;
-import java.util.Map;
 
 @WebMvcTest(ItemRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -43,17 +42,19 @@ public class ItemRestControllerTests {
                 .hasPathSatisfying("$.content[0]", assertProvider -> assertProvider
                         .assertThat()
                         .asMap()
-                        .contains(Map.entry("id", 9001))
-                        .contains(Map.entry("name", "Test1"))
-                        .contains(Map.entry("price", 1000))
-                        .contains(Map.entry("sellPrice", 500)))
+                        .containsEntry("id", 9001)
+                        .containsEntry("name", "Test1")
+                        .containsEntry("price", 1000)
+                        .containsEntry("sellPrice", 500))
                 .hasPathSatisfying("$.content[1]", assertProvider -> assertProvider
                         .assertThat()
                         .asMap()
-                        .contains(Map.entry("id", 9002))
-                        .contains(Map.entry("name", "Test2"))
-                        .contains(Map.entry("price", 2000))
-                        .contains(Map.entry("sellPrice", 1000)));
+                        .containsEntry("id", 9002)
+                        .containsEntry("name", "Test2")
+                        .containsEntry("price", 2000)
+                        .containsEntry("sellPrice", 1000));
+
+        Mockito.verify(service).list(Mockito.any(Pageable.class));
     }
 
     @Test
@@ -72,9 +73,35 @@ public class ItemRestControllerTests {
                 .bodyJson()
                 .extractingPath("$.content[0]")
                 .asMap()
-                .contains(Map.entry("id", 9001))
-                .contains(Map.entry("name", "Test1"))
-                .contains(Map.entry("price", 1000))
-                .contains(Map.entry("sellPrice", 500));
+                .containsEntry("id", 9001)
+                .containsEntry("name", "Test1")
+                .containsEntry("price", 1000)
+                .containsEntry("sellPrice", 500);
+
+        Mockito.verify(service).search(Mockito.eq("Test1"), Mockito.any(Pageable.class));
+    }
+
+    @Test
+    void test_get_withPathVar() {
+        // Arrange
+        Mockito.doReturn(new Item(9001, "Test1", 1000, 500))
+                .when(service)
+                .lookup(Mockito.anyInt());
+
+        // Act
+        // Assert
+        mockMvc.get().uri("/items/9001")
+                .param("name", "Test1")
+                .assertThat()
+                .hasStatusOk()
+                .bodyJson()
+                .extractingPath("$")
+                .asMap()
+                .containsEntry("id", 9001)
+                .containsEntry("name", "Test1")
+                .containsEntry("price", 1000)
+                .containsEntry("sellPrice", 500);
+
+        Mockito.verify(service).lookup(Mockito.eq(9001));
     }
 }
