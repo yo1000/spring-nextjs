@@ -1,7 +1,7 @@
 Spring Next.js
 ================================================================================
 
-Spring x Next.js demo
+Spring Boot x Next.js demo
 
 
 Requirements
@@ -15,7 +15,7 @@ Requirements
 Technology Stacks
 --------------------------------------------------------------------------------
 
-- API server: Java, Spring Boot, Spring Security, Spring Security
+- API server: Java, Spring Boot, Spring Security, Spring Data JPA
 - Gateway server: Java, Spring Boot, Spring Security, Spring Cloud Gateway
 - Frontend: TypeScript, Next.js, oidc-client-ts, Tailwind CSS
 
@@ -55,13 +55,13 @@ ls ui/out
 How to test
 --------------------------------------------------------------------------------
 
-Test server modules
+Test backend (Java) modules
 
 ```bash
 ./mvnw clean test
 ```
 
-Test frontend module
+Test frontend (Node.js) module
 
 ```bash
 (cd ui;
@@ -69,7 +69,7 @@ npm install;
 npm run test)
 ```
 
-Test frontend module with `watch` option
+Test frontend (Node.js) module with `watch` option
 
 ```bash
 (cd ui;
