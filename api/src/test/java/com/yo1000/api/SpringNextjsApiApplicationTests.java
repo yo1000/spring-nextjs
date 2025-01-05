@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 		"spring.sql.init.mode=never",
 		"app.security.idp=test"
 })
-class SpringNextjsServerApplicationTests {
+class SpringNextjsApiApplicationTests {
 	@Test
 	void contextLoads() {
 		// Dependency checks only
