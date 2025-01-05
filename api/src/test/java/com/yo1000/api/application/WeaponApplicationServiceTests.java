@@ -1,8 +1,6 @@
 package com.yo1000.api.application;
 
-import com.yo1000.api.domain.model.Item;
 import com.yo1000.api.domain.model.Weapon;
-import com.yo1000.api.domain.repository.ItemRepository;
 import com.yo1000.api.domain.repository.WeaponRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Optional;
 
 public class WeaponApplicationServiceTests {
     @Test
