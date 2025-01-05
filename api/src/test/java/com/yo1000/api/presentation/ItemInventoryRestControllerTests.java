@@ -8,8 +8,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 @WebMvcTest(ItemInventoryRestController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@Import(ExceptionHandlerAdvice.class)
 public class ItemInventoryRestControllerTests {
     @Autowired
     MockMvcTester mockMvc;
@@ -103,6 +106,39 @@ public class ItemInventoryRestControllerTests {
                 ),
                 10
         )));
+    }
+
+    @Test
+    void test_post_invalid() {
+        // Arrange
+        Mockito.doReturn(new ItemInventory(9001, new Item(9001, "Test1", 1000, 500), 10))
+                .when(service)
+                .create(Mockito.any(ItemInventory.class));
+
+        // Act
+        // Assert
+        mockMvc.post().uri("/itemInventories")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content("""
+                        {
+                            "id": 9001,
+                            "item": {
+                                "id": 9001,
+                                "name": "Test1",
+                                "price": 1000,
+                                "sellPrice": 500
+                            },
+                            "quantity": -1
+                        }
+                        """)
+                .assertThat()
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyJson()
+                .extractingPath("$.parameters")
+                .asMap()
+                .containsEntry("quantity", -1);
+
+        Mockito.verifyNoInteractions(service);
     }
 
     @Test
