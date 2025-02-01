@@ -18,7 +18,10 @@ public class ExceptionHandlerAdvice {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
 
         problemDetail.setProperty("parameters", e.getConstraintViolations().stream()
-                .map(violation -> Map.entry(violation.getPropertyPath().toString(), violation.getInvalidValue()))
+                .map(violation -> Map.entry(violation.getPropertyPath().toString(), new ErrorParameter(
+                        violation.getInvalidValue(),
+                        violation.getMessage()
+                )))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         return problemDetail;
@@ -32,17 +35,28 @@ public class ExceptionHandlerAdvice {
                 .filter(Objects::nonNull)
                 .map(objectError -> {
                     if (objectError instanceof FieldError fieldError) {
-                        return new AbstractMap.SimpleEntry<>(fieldError.getField(), fieldError.getRejectedValue());
+                        return new AbstractMap.SimpleEntry<>(
+                                fieldError.getField(),
+                                new ErrorParameter(
+                                        fieldError.getRejectedValue(),
+                                        fieldError.getDefaultMessage()));
                     } else {
                         return new AbstractMap.SimpleEntry<>(
                                 objectError.getObjectName() + "." + objectError.getCode(),
-                                Arrays.stream(Optional.ofNullable(objectError.getArguments()).orElse(new Object[0]))
-                                        .map(o -> Optional.ofNullable(o).map(Object::toString).orElse(""))
-                                        .collect(Collectors.joining(", ")));
+                                new ErrorParameter(
+                                        Arrays.stream(Optional.ofNullable(objectError.getArguments()).orElse(new Object[0]))
+                                                .map(o -> Optional.ofNullable(o).map(Object::toString).orElse(""))
+                                                .collect(Collectors.joining(", ")),
+                                        objectError.getDefaultMessage()));
                     }
                 })
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
         return problemDetail;
     }
+
+    record ErrorParameter(
+            Object value,
+            String message
+    ) {}
 }
