@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
@@ -10,9 +10,12 @@ const Items = () => {
     const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
 
     const {user} = useAuth();
-    const itemsApiClient = new ItemsApiClient(user?.access_token, apiBaseUri);
 
     const [items, setItems] = useState<PagedData<any> | null>();
+
+    const itemsApiClient = useMemo(
+        () => new ItemsApiClient(user?.access_token, apiBaseUri),
+        [user?.access_token, apiBaseUri]);
 
     useEffect(() => {
         const fetchItems = async () => {
@@ -28,7 +31,7 @@ const Items = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username]);
+    }, [user?.profile?.preferred_username, itemsApiClient]);
 
     return (
         <Content title={`Items`}>

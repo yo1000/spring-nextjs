@@ -4,7 +4,7 @@ import ApiClient from "@/utils/ApiClient";
 import {PagedData} from "@/components/Table";
 
 export type UserProfile = {
-    id: number;
+    id?: number;
     username: string;
     familyName: string;
     givenName: string;

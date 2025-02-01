@@ -18,7 +18,7 @@ export type PagedData<T> = {
 type TableProps<T> = {
     data: PagedData<T> | null | undefined;
     searchLabel?: string;
-    onSearch: (keyword: string) => void;
+    onSearch?: (keyword: string) => void;
     onAdd?: () => void;
     onEdit?: (data: T) => void;
     onClickPage: (keyword: string, page: number) => void;

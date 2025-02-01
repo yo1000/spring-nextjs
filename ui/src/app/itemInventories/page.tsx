@@ -1,10 +1,10 @@
 'use client';
 
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
-import Modal from "@/components/Modal";
+import Modal, {ComponentType} from "@/components/Modal";
 import ItemInventoriesApiClient, {ItemInventory} from "@/utils/ItemInventoriesApiClient";
 import ItemsApiClient from "@/utils/ItemsApiClient";
 
@@ -19,14 +19,19 @@ const ItemInventories = () => {
     const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
 
     const {user} = useAuth();
-    const itemsApiClient = new ItemsApiClient(user?.access_token, apiBaseUri);
-    const itemInventoriesApiClient = new ItemInventoriesApiClient(user?.access_token, apiBaseUri);
 
     const [itemInventories, setItemInventories] = useState<PagedData<ItemInventory> | null>();
     const [editModalShown, setEditModalShown] = useState(false);
     const [editModalData, setEditModalData] = useState<any | null | undefined>(null);
     const [addModalShown, setAddModalShown] = useState(false);
     const [addModalData, setAddModalData] = useState<any | null | undefined>(null);
+
+    const itemsApiClient = useMemo(
+        () => new ItemsApiClient(user?.access_token, apiBaseUri),
+        [user?.access_token, apiBaseUri]);
+    const itemInventoriesApiClient = useMemo(
+        () => new ItemInventoriesApiClient(user?.access_token, apiBaseUri),
+        [user?.access_token, apiBaseUri]);
 
     useEffect(() => {
         const fetchItemInventories = async () => {
@@ -42,7 +47,7 @@ const ItemInventories = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username]);
+    }, [user?.profile?.preferred_username, itemInventoriesApiClient]);
 
     return (
         <Content title={`Item Inventories`}>
@@ -82,77 +87,94 @@ const ItemInventories = () => {
                 }}
             />
             <Modal open={editModalShown}
-                   data={editModalData}
-                   readonly={[`id`, `itemId`, `name`]}
                    title={`Edit Item Inventory`}
-                   onSave={async (data) => {
-                       const keepContent = (itemInventories?.content ?? [])
-                           .filter(d => data.id !== d.id);
-                       const newContentItem = {
-                           ...(((itemInventories?.content ?? [])).find(d => data.id === d.id)!),
-                           quantity: data.quantity,
-                       }
+                   data={editModalData}
+                   dataConfig={[{
+                       name: `id`,
+                       type: ComponentType.Label,
+                   }, {
+                       name: `itemId`,
+                       type: ComponentType.Label,
+                   }, {
+                       name: `name`,
+                       type: ComponentType.Label,
+                   }, ]}
+                   save={{
+                       onClick: async (data) => {
+                           const keepContent = (itemInventories?.content ?? [])
+                               .filter(d => data.id !== d.id);
+                           const newContentItem = {
+                               ...(((itemInventories?.content ?? [])).find(d => data.id === d.id)!),
+                               quantity: data.quantity,
+                           }
 
-                       if (!newContentItem) {
-                           return;
-                       }
+                           if (!newContentItem) {
+                               return;
+                           }
 
-                       try {
-                           await itemInventoriesApiClient.patchById(newContentItem.id, newContentItem);
+                           try {
+                               await itemInventoriesApiClient.patchById(newContentItem.id, newContentItem);
 
-                           setItemInventories({
-                               ...itemInventories,
-                               content: [
-                                   ...keepContent,
-                                   newContentItem,
-                               ]
-                           } as PagedData<ItemInventory>);
+                               setItemInventories({
+                                   ...itemInventories,
+                                   content: [
+                                       ...keepContent,
+                                       newContentItem,
+                                   ]
+                               } as PagedData<ItemInventory>);
 
-                           setEditModalShown(false);
-                       } catch (e) {
-                           console.error(e);
+                               setEditModalShown(false);
+                           } catch (e) {
+                               console.error(e);
+                           }
                        }
                    }}
-                   onCancel={() => {
-                       setEditModalShown(false);
+                   cancel={{
+                       onClick: () => {
+                           setEditModalShown(false);
+                       }
                    }}
             />
             <Modal open={addModalShown}
-                   data={addModalData}
                    title={`Add Item Inventory`}
-                   onSave={async (data) => {
-                       if (!data.itemId) {
-                           return;
-                       }
+                   data={addModalData}
+                   save={{
+                       onClick: async (data) => {
+                           if (!data.itemId) {
+                               return;
+                           }
 
-                       try {
-                           const item = await itemsApiClient.getById(data.itemId);
+                           try {
+                               const item = await itemsApiClient.getById(data.itemId);
 
-                           const newData = await itemInventoriesApiClient.post({
-                               id: data.id,
-                               item: item,
-                               quantity: data.quantity,
-                           });
+                               const newData = await itemInventoriesApiClient.post({
+                                   id: data.id,
+                                   item: item,
+                                   quantity: data.quantity,
+                               });
 
-                           setItemInventories({
-                               ...itemInventories,
-                               content: [
-                                   ...(itemInventories?.content ?? []),
-                                   {
-                                       id: newData.id,
-                                       item: item,
-                                       quantity: newData.quantity,
-                                   },
-                               ]
-                           } as PagedData<ItemInventory>);
+                               setItemInventories({
+                                   ...itemInventories,
+                                   content: [
+                                       ...(itemInventories?.content ?? []),
+                                       {
+                                           id: newData.id,
+                                           item: item,
+                                           quantity: newData.quantity,
+                                       },
+                                   ]
+                               } as PagedData<ItemInventory>);
 
-                           setAddModalShown(false);
-                       } catch (e) {
-                           console.error(e);
+                               setAddModalShown(false);
+                           } catch (e) {
+                               console.error(e);
+                           }
                        }
                    }}
-                   onCancel={() => {
-                       setAddModalShown(false);
+                   cancel={{
+                       onClick: () => {
+                           setAddModalShown(false);
+                       }
                    }}
             />
         </Content>

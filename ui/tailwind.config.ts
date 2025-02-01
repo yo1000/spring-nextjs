@@ -39,6 +39,10 @@ const config: Config = {
     },
   },
   plugins: [],
+  safelist: [{
+    pattern: /col-span-[0-9]{1,2}/,
+    variants: ["sm", "md", "lg", "xl", "2xl"],
+  },],
 } as Config;
 
 export default config;

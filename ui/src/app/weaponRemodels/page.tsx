@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import Content from "@/components/Content";
 import Table, {PagedData} from "@/components/Table";
 import {useAuth} from "@/contexts/AuthContext";
@@ -17,9 +17,13 @@ const WeaponRemodels = () => {
     const apiBaseUri = process.env.NEXT_PUBLIC_API_BASE_URI;
 
     const {user} = useAuth();
-    const weaponRemodelsApiClient = new WeaponRemodelsApiClient(user?.access_token, apiBaseUri);
 
     const [weaponRemodels, setWeaponRemodels] = useState<PagedData<WeaponRemodel> | null>();
+
+    const weaponRemodelsApiClient = useMemo(
+        () => new WeaponRemodelsApiClient(user?.access_token, apiBaseUri),
+        [user?.access_token, apiBaseUri]
+    );
 
     useEffect(() => {
         const fetchWeaponRemodels = async () => {
@@ -35,7 +39,7 @@ const WeaponRemodels = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username]);
+    }, [user?.profile?.preferred_username, weaponRemodelsApiClient]);
 
     return (
         <Content title={`Weapon Remodels`}>
