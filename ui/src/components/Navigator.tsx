@@ -32,7 +32,7 @@ export default function Navigator() {
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-16 items-center justify-between">
                             <div className="flex items-center">
-                                <div className="flex-shrink-0">
+                                <div className="shrink-0">
                                     <Link href={`/`}>
                                         <Image
                                             className="h-fit w-fit text-white"
@@ -94,7 +94,7 @@ export default function Navigator() {
                             <div className="-mr-2 flex md:hidden">
                                 {/* Mobile menu button */}
                                 <DisclosureButton
-                                    className="relative inline-flex items-center justify-center rounded-md bg-neutral-800 p-2 text-neutral-400 hover:bg-neutral-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-800">
+                                    className="relative inline-flex items-center justify-center rounded-md bg-neutral-800 p-2 text-neutral-400 hover:bg-neutral-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-neutral-800">
                                     <span className="absolute -inset-0.5"/>
                                     <span className="sr-only">Open main menu</span>
                                     {open ? (

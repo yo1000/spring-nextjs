@@ -1,8 +1,6 @@
-import type {Config} from "tailwindcss";
-
 const Color = require('color');
 
-function generateShades(baseColor: string) {
+function generateShades(baseColor) {
   return {
     50: Color(baseColor).lighten(1).hex(),
     100: Color(baseColor).lighten(0.8).hex(),
@@ -17,7 +15,7 @@ function generateShades(baseColor: string) {
   };
 }
 
-const config: Config = {
+const config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -43,6 +41,6 @@ const config: Config = {
     pattern: /col-span-[0-9]{1,2}/,
     variants: ["sm", "md", "lg", "xl", "2xl"],
   },],
-} as Config;
+};
 
 export default config;

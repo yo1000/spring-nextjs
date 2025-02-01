@@ -73,19 +73,19 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                 })
             )
         }
-    }, [open]);
+    }, [open, data, dataConfig]);
 
     return (
         <Dialog className="relative z-10" open={open} onClose={() => {}}>
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"/>
+                className="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in"/>
 
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div className="flex min-h-full items-end justify-center p-4 text-center items-center sm:items-center sm:p-0">
                     <DialogPanel
                         transition
-                        className="relative transform overflow-hidden rounded-lg bg-white pb-4 pt-2 sm:pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 w-full sm:w-full sm:max-w-3xl data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
+                        className="relative transform overflow-hidden rounded-lg bg-white pb-4 pt-2 sm:pt-5 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-leave:duration-200 data-enter:ease-out data-leave:ease-in sm:my-8 w-full sm:w-full sm:max-w-3xl sm:data-closed:translate-y-0 sm:data-closed:scale-95">
                         <div className="sm:items-start">
                             <div className="mt-3 text-center sm:mt-0 sm:text-left">
                                 <div className="border-b border-gray-200 pb-5">
@@ -105,7 +105,7 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                                                     {
                                                         datum.config.type === ComponentType.Label ? <span>{datum.value}</span>
                                                         : datum.config.type === ComponentType.Text ? <input
-                                                                className={`block w-full h-9 rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6`}
+                                                                className={`block w-full h-9 rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-xs ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6`}
                                                                 type={`text`}
                                                                 name={datum.config.name}
                                                                 id={`modal-${title}-${index}-${datum.config.name}`}
@@ -125,7 +125,7 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                                                                     }));
                                                                 }}/>
                                                         : datum.config.type === ComponentType.TextArea ? <textarea
-                                                                className={`block w-full rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6`}
+                                                                className={`block w-full rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-xs ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6`}
                                                                 name={datum.config.name}
                                                                 id={`modal-${title}-${index}-${datum.config.name}`}
                                                                 onChange={({target: {value}}) => {
@@ -143,7 +143,7 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                                                                     }));
                                                                 }}>{datum.value}</textarea>
                                                         : datum.config.type === ComponentType.Select ? <select
-                                                                className={`block w-full h-9 rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6`}
+                                                                className={`block w-full h-9 rounded-md border-0 py-1.5 px-2 text-neutral-900 shadow-xs ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6`}
                                                                 name={datum.config.name}
                                                                 id={`modal-${title}-${index}-${datum.config.name}`}
                                                                 onChange={({target: {value}}) => {
@@ -164,7 +164,7 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                                                                             value={o.value}
                                                                             selected={o.value === datum.value}>{o.label}</option>))}</select>
                                                         : datum.config.type === ComponentType.Checkbox ? (datum.config.options?.map(o => (<div key={o.value} className="flex gap-3"><div className="flex h-6 shrink-0 items-center"><div className="group grid size-4 grid-cols-1"><input
-                                                                className={`col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-primary-600 checked:bg-primary-600 indeterminate:border-primary-600 indeterminate:bg-primary-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto`}
+                                                                className={`col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-primary-600 checked:bg-primary-600 indeterminate:border-primary-600 indeterminate:bg-primary-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto`}
                                                                 type={`checkbox`}
                                                                 name={datum.config.name}
                                                                 id={`modal-${title}-${index}-${datum.config.name}-${o.value}`}
@@ -203,7 +203,7 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                         <div className="mt-6 sm:mt-6 sm:flex sm:flex-row-reverse px-4 sm:px-6 pb-1">
                             <button
                                 type="button"
-                                className="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 sm:ml-3 sm:w-auto"
+                                className="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-primary-500 sm:ml-3 sm:w-auto"
                                 onClick={() => {
                                     const saveData: any = {};
 
@@ -217,7 +217,7 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                             </button>
                             <button
                                 type="button"
-                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 sm:mt-0 sm:w-auto"
+                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-xs ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 sm:mt-0 sm:w-auto"
                                 onClick={cancelButton.onClick}
                                 data-autofocus={`data-autofocus`}>
                                 {cancelButton.label}

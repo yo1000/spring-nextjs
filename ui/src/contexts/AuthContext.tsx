@@ -49,7 +49,7 @@ export const AuthProvider = ({children, oidcConfig}: { children: ReactNode, oidc
                 console.error('signinRedirectCallback error', error);
             });
         }
-    }, [userManager]);
+    }, [userManager, eventAdded, user?.access_token]);
 
     const signinRedirect = () => {
         void userManager.signinRedirect();
