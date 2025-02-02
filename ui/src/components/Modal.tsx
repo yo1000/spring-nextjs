@@ -96,7 +96,10 @@ export default function Modal({open, title, data, dataConfig, save, cancel}: Mod
                                 <div className="mt-2 px-4 sm:px-6">
                                     <div className="mt-4 sm:mt-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 text-left">
                                         {editData?.map((datum, index) => (
-                                            <div key={`modal-${title}-${index}-${datum.config.name}`} className={`sm:col-span-${datum.config.colspan}`}>
+                                            <div key={`modal-${title}-${index}-${datum.config.name}`}
+                                                 style={datum.config.colspan && datum.config.colspan > 1
+                                                     ? {gridColumn: `span ${datum.config.colspan}`}
+                                                     : {}}>
                                                 <label htmlFor={`modal-${title}-${index}-${datum.config.name}`}
                                                        className="block text-sm font-medium leading-6 text-neutral-900">
                                                     {datum.config.name}

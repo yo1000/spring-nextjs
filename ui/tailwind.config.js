@@ -16,11 +16,6 @@ function generateShades(baseColor) {
 }
 
 const config = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
   theme: {
     extend: {
       colors: {
@@ -37,10 +32,6 @@ const config = {
     },
   },
   plugins: [],
-  safelist: [{
-    pattern: /col-span-[0-9]{1,2}/,
-    variants: ["sm", "md", "lg", "xl", "2xl"],
-  },],
 };
 
 export default config;
