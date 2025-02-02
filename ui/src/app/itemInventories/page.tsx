@@ -47,7 +47,7 @@ const ItemInventories = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username, itemInventoriesApiClient]);
+    }, [user?.profile?.preferred_username]);
 
     return (
         <Content title={`Item Inventories`}>

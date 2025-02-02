@@ -39,7 +39,7 @@ const WeaponRemodels = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username, weaponRemodelsApiClient]);
+    }, [user?.profile?.preferred_username]);
 
     return (
         <Content title={`Weapon Remodels`}>

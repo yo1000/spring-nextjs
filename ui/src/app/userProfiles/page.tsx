@@ -36,7 +36,7 @@ const UserProfiles = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username, userProfilesApiClient]);
+    }, [user?.profile?.preferred_username]);
 
     return (
         <Content title={`User Profiles`}>

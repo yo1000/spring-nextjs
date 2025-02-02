@@ -32,7 +32,7 @@ const Weapons = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username, weaponsApiClient]);
+    }, [user?.profile?.preferred_username]);
 
     return (
         <Content title={`Weapons`}>

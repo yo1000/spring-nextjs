@@ -31,7 +31,7 @@ const Items = () => {
         } catch (e) {
             console.error(e);
         }
-    }, [user?.profile?.preferred_username, itemsApiClient]);
+    }, [user?.profile?.preferred_username]);
 
     return (
         <Content title={`Items`}>
