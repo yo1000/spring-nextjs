@@ -1,7 +1,7 @@
 'use client';
 
 import React, {createContext, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
-import {User, UserManager} from 'oidc-client-ts';
+import {RevokeTokensTypes, User, UserManager} from 'oidc-client-ts';
 
 type AuthContextType = {
     user: User | null;
@@ -28,28 +28,33 @@ export const AuthProvider = ({children, oidcConfig}: { children: ReactNode, oidc
             userManager.events.addAccessTokenExpired(handleUserUnloaded);
             setEventAdded(true);
         }
+    }, [userManager]);
 
-        userManager.getUser().then((u) => {
-            if (!u) {
-                setUser(null);
-                // // Sign-in redirect if user has not yet loaded
-                // userManager.signinRedirect();
-                return;
-            }
-
-            if (u.access_token !== user?.access_token) {
-                setUser(u);
-            }
-        });
-
+    useEffect(() => {
         if (!user?.access_token) {
-            userManager.signinRedirectCallback().then((user) => {
-                setUser(user);
-            }).catch((error) => {
-                console.error('signinRedirectCallback error', error);
-            });
+            userManager.signinRedirectCallback()
+                .then((user) => setUser(user))
+                .catch((error) => {
+                    console.error('signinRedirectCallback error', error);
+                });
         }
-    }, [userManager, eventAdded, user?.access_token]);
+
+        userManager
+            .getUser()
+            .then((existingUser) => {
+                if (existingUser && !existingUser.expired) {
+                    setUser(existingUser);
+                } else {
+                    setUser(null);
+                    // // Sign-in redirect if user has not yet loaded
+                    // userManager.signinRedirect();
+                }
+            })
+            .catch((err) => {
+                console.error('getUser error:', err);
+                setUser(null);
+            });
+    }, [userManager]);
 
     const signinRedirect = () => {
         void userManager.signinRedirect();
