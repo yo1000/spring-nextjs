@@ -132,11 +132,12 @@ public class ItemInventoryRestControllerTests {
                         }
                         """)
                 .assertThat()
+                .debug()
                 .hasStatus(HttpStatus.BAD_REQUEST)
                 .bodyJson()
-                .extractingPath("$.parameters")
+                .extractingPath("$.parameters.quantity")
                 .asMap()
-                .containsEntry("quantity", -1);
+                .containsEntry("value", -1);
 
         Mockito.verifyNoInteractions(service);
     }
