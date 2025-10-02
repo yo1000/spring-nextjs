@@ -93,12 +93,13 @@ Start API server module
 ./mvnw clean spring-boot:run \
 -pl api \
 -Dspring-boot.run.arguments="
-  --spring.datasource.url=jdbc:postgresql://localhost:5432/spring_nextjs
+  --spring.datasource.url=jdbc:postgresql://localhost:5432/postgres?currentSchema=eight
   --spring.datasource.username=postgres
   --spring.datasource.password=postgres
   --spring.jpa.defer-datasource-initialization=true
   --spring.jpa.show-sql=false
   --spring.jpa.hibernate.ddl-auto=create
+  --spring.jpa.properties.hibernate.default_schema=eight
   --spring.sql.init.mode=always
   --spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
   --app.security.idp=keycloak
@@ -106,7 +107,7 @@ Start API server module
 "
 ```
 
-Start frontend module
+Start frontend (oidc-client-ts authentication) module
 
 ```bash
 (cd ui; \
@@ -119,7 +120,7 @@ NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
 npm run build && npm run serve)
 ```
 
-Start frontend module as hot-reload
+with hot-reload
 
 ```bash
 (cd ui; \
@@ -129,6 +130,24 @@ NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
 NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
 NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
 NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
+npm run dev)
+```
+
+Start frontend (Auth.js = NextAuth authentication) module with hot-reload
+
+```bash
+(cd ui_authjs; \
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
+export API_BASE_URL="http://localhost:8080" \
+export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
+export KEYCLOAK_CLIENT_ID="spring-nextjs" \
+export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
+export NEXTAUTH_URL="http://localhost:3000" \
+export NEXTAUTH_SECRET="replace-with-a-strong-random-string" \
+export AUTH_TRUST_HOST=true \
+export NEXT_PUBLIC_API_BASE_URI="http://localhost:8080" \
+npm install; \
+npm exec prisma migrate dev -- --name init; \
 npm run dev)
 ```
 

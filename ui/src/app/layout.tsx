@@ -49,13 +49,17 @@ export default function RootLayout({
         <html lang="en" className={`h-full bg-neutral-100`}>
         <body className={`h-full ${noTofuEmoji.className} ${noTofuJp.className} ${noTofu.className}`}>
         {oidcConfig
-            ? <AuthProvider oidcConfig={oidcConfig}>
+          ? (
+            <AuthProvider oidcConfig={oidcConfig}>
                 <div className="min-h-full">
                     <Navigator/>
                     {children}
                 </div>
             </AuthProvider>
-            : <div>Loading...</div>
+          )
+          : (
+            <div>Loading...</div>
+          )
         }
         </body>
         </html>

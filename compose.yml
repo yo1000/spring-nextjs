@@ -21,17 +21,45 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: spring_nextjs
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./setup-database.sql:/docker-entrypoint-initdb.d/setup-database.sql
+    healthcheck:
+      test: pg_isready -h 127.0.0.1 -U postgres -d postgres
+      interval: 5s
+
+  dbgate:
+    image: dbgate/dbgate
+    environment:
+      CONNECTIONS: conn1
+      LABEL_conn1: postgres
+      SERVER_conn1: postgres
+      USER_conn1: postgres
+      PASSWORD_conn1: postgres
+      PORT_conn1: 5432
+      ENGINE_conn1: postgres@dbgate-plugin-postgres
+    ports:
+      - "5480:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   keycloak:
-    image: quay.io/keycloak/keycloak:21.0
+    image: keycloak/keycloak:26.3
     ports:
       - "8000:8080"
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_SCHEMA: keycloak
+      KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
       KC_HEALTH_ENABLED: true
+      KC_HTTP_MANAGEMENT_PORT: 9000
     command:
       - start-dev
 
@@ -43,9 +71,11 @@ services:
       timeout: 10s
       retries: 15
     environment:
+      KEYCLOAK_URL_HEALTH: http://keycloak:9000/health
       KEYCLOAK_URL_BASE: http://keycloak:8080
       KEYCLOAK_REALM: master
       KEYCLOAK_CLIENT_ID: spring-nextjs
+      KEYCLOAK_CLIENT_SECRET: Secret-1234567890-Secret
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     volumes:

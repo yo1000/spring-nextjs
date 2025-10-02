@@ -3,6 +3,7 @@
 KEEP_ENV=$(cat /tmp/.env | grep -v 'READY=')
 echo "${KEEP_ENV}" > /tmp/.env
 
+KEYCLOAK_URL_HEALTH=${KEYCLOAK_URL_HEALTH:-"http://localhost:9000/management/health"}
 KEYCLOAK_URL_BASE=${KEYCLOAK_URL_BASE:-"http://localhost:8080"}
 KEYCLOAK_REALM=${KEYCLOAK_REALM:-"master"}
 KEYCLOAK_CLIENT_ID_API=${KEYCLOAK_CLIENT_ID_API:-"spring-nextjs"}
@@ -13,7 +14,7 @@ KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD:-"admin"}
 
 RETRY_SEC=1
 RETRY_SEC_MAX=300
-while [[ -z "$(curl -sI ${KEYCLOAK_URL_BASE}/health | head -n1 | grep 200)" ]]; do
+while [[ -z "$(curl -sI "${KEYCLOAK_URL_HEALTH}" | head -n1 | grep 200)" ]]; do
   if [[ $RETRY_SEC -gt $RETRY_SEC_MAX ]]; then
     echo "Timeout: ${RETRY_SEC} > ${RETRY_SEC_MAX}"
     exit 1
@@ -21,9 +22,8 @@ while [[ -z "$(curl -sI ${KEYCLOAK_URL_BASE}/health | head -n1 | grep 200)" ]]; 
 
   echo "Sleep: ${RETRY_SEC}"
   sleep $RETRY_SEC
-  RETRY_SEC=$(expr $RETRY_SEC + $RETRY_SEC)
+  RETRY_SEC=$(expr "${RETRY_SEC}" + "${RETRY_SEC}")
 done
-
 
 # Re-Authenticate
 KC_ACCESS_TOKEN=$(
@@ -110,6 +110,7 @@ curl -s \
   -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
   -d "{
     \"clientId\": \"${KEYCLOAK_CLIENT_ID_API}\",
+    \"clientAuthenticatorType\": \"client-secret\",
     \"implicitFlowEnabled\": true,
     \"publicClient\": true,
     \"redirectUris\": [\"*\"],
@@ -134,6 +135,16 @@ KC_CLIENT_SECRET=$(
 echo "${KC_CLIENT_RESP}" \
   | jq -r '.[0].secret' \
 )
+
+curl \
+  -XPUT \
+  -H "Content-Type: application/json" \
+  -H "Authorization: bearer ${KC_ACCESS_TOKEN}" \
+  "${KEYCLOAK_URL_BASE}/admin/realms/${KEYCLOAK_REALM}/clients/${KC_CLIENT_ID}" \
+  -d "{
+    \"id\"     : \"${KC_CLIENT_ID}\",
+    \"secret\" : \"${KC_CLIENT_SECRET}\"
+  }"
 
 curl -s \
   -X POST \
