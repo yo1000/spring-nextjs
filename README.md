@@ -87,7 +87,7 @@ Start dependency servers
 docker compose up
 ```
 
-Start API server module
+### Start API server module
 
 ```bash
 ./mvnw clean spring-boot:run \
@@ -107,7 +107,7 @@ Start API server module
 "
 ```
 
-Start frontend (oidc-client-ts authentication) module
+### Start frontend (oidc-client-ts authentication) module
 
 ```bash
 (cd ui; \
@@ -133,7 +133,25 @@ NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
 npm run dev)
 ```
 
-Start frontend (Auth.js = NextAuth authentication) module with hot-reload
+### Start frontend (Auth.js = NextAuth authentication) module
+
+```bash
+(cd ui_authjs; \
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
+export API_BASE_URL="http://localhost:8080" \
+export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
+export KEYCLOAK_CLIENT_ID="spring-nextjs" \
+export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
+export NEXTAUTH_URL="http://localhost:3000" \
+export NEXTAUTH_SECRET="replace-with-a-strong-random-string" \
+export AUTH_TRUST_HOST=true \
+export NEXT_PUBLIC_API_BASE_URI="http://localhost:8080" \
+npm install; \
+npm exec prisma migrate dev -- --name init; \
+npm run build && npm run start)
+```
+
+with hot-reload
 
 ```bash
 (cd ui_authjs; \
@@ -151,7 +169,7 @@ npm exec prisma migrate dev -- --name init; \
 npm run dev)
 ```
 
-Start gateway server module
+### Start gateway server module
 
 ```bash
 ./mvnw clean spring-boot:run \
