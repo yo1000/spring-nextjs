@@ -20,7 +20,7 @@ Technology Stacks
 - Frontend: TypeScript, Next.js, oidc-client-ts, Tailwind CSS
 
 
-How to build
+How to Production build
 --------------------------------------------------------------------------------
 
 Build server modules as release version
@@ -37,11 +37,29 @@ Build server modules as development version
 ./mvnw clean package
 ```
 
-Build frontend module
+Build and run frontend (Auth.js = NextAuth authentication) module
+
+```bash
+(cd ui_authjs; \
+export DATABASE_URL=${DATABASE_CONN_URL} \
+export KEYCLOAK_ISSUER=${OIDC_ISSUER_URI} \
+export KEYCLOAK_CLIENT_ID=${OIDC_CLIENT_ID} \
+export KEYCLOAK_CLIENT_SECRET=${OIDC_CLIENT_SECRET} \
+export NEXTAUTH_URL=${FRONTEND_URI} \
+export NEXTAUTH_SECRET=${NEXT_CRYPT_SECRET} \
+export AUTH_TRUST_HOST=true \
+export NEXT_PUBLIC_API_BASE_URI=${RESOURCE_SERVER_URI} \
+npm install; \
+npm exec prisma migrate dev -- --name init; \
+npm run build && npm run start)
+```
+
+Build frontend (oidc-client-ts authentication) module
 
 ```bash
 (cd ui;
 npm install;
+NEXT_PUBLIC_API_BASE_URI=${RESOURCE_SERVER_URI} \
 NEXT_PUBLIC_OIDC_AUTHORITY=${OIDC_ISSUER_URI} \
 NEXT_PUBLIC_OIDC_CLIENT_ID=${OIDC_CLIENT_ID} \
 NEXT_PUBLIC_OIDC_REDIRECT_URI=${OIDC_POST_SIGNIN_REDIRECT_URI} \
@@ -107,38 +125,11 @@ docker compose up
 "
 ```
 
-### Start frontend (oidc-client-ts authentication) module
-
-```bash
-(cd ui; \
-npm install;
-NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
-NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
-NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
-NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
-NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
-npm run build && npm run serve)
-```
-
-with hot-reload
-
-```bash
-(cd ui; \
-npm install;
-NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
-NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
-NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
-NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
-NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
-npm run dev)
-```
-
 ### Start frontend (Auth.js = NextAuth authentication) module
 
 ```bash
 (cd ui_authjs; \
 export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
-export API_BASE_URL="http://localhost:8080" \
 export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
 export KEYCLOAK_CLIENT_ID="spring-nextjs" \
 export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
@@ -156,7 +147,6 @@ with hot-reload
 ```bash
 (cd ui_authjs; \
 export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
-export API_BASE_URL="http://localhost:8080" \
 export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
 export KEYCLOAK_CLIENT_ID="spring-nextjs" \
 export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
@@ -166,6 +156,32 @@ export AUTH_TRUST_HOST=true \
 export NEXT_PUBLIC_API_BASE_URI="http://localhost:8080" \
 npm install; \
 npm exec prisma migrate dev -- --name init; \
+npm run dev)
+```
+
+### Start frontend (oidc-client-ts authentication) module
+
+```bash
+(cd ui_oidc-client-ts; \
+npm install;
+NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
+NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
+NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
+NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
+NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
+npm run build && npm run serve)
+```
+
+with hot-reload
+
+```bash
+(cd ui_oidc-client-ts; \
+npm install;
+NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
+NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
+NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
+NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
+NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
 npm run dev)
 ```
 
