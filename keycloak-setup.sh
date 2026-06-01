@@ -727,5 +727,5 @@ echo "User created
 | selphie  | Selphie-1234 | selphie@localhost |                                    |
 "
 
-# for Debug
-#while :; do sleep 10; done
+touch /tmp/READY
+sleep infinity

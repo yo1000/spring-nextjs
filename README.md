@@ -20,53 +20,91 @@ Technology Stacks
 - Frontend: TypeScript, Next.js, oidc-client-ts, Tailwind CSS
 
 
-How to Production build
---------------------------------------------------------------------------------
-
-Build server modules as release version
+How to Run
+----------------------------------------------------------------------------------------------------
 
 ```bash
-APP_VERSION=1.0.0
-
-./mvnw -Dapp.version="${APP_VERSION}" clean package
+docker compose down && docker compose up --build  
 ```
 
-Build server modules as development version
+
+How to Run for Dev
+----------------------------------------------------------------------------------------------------
+
+### Preparation
 
 ```bash
-./mvnw clean package
+docker compose up
 ```
 
-Build and run frontend (Auth.js = NextAuth authentication) module
+### API (Java - Spring Boot)
+
+```bash
+./mvnw clean spring-boot:run \
+-pl api \
+-Dspring-boot.run.arguments="
+  --spring.datasource.url=jdbc:postgresql://localhost:5432/postgres?currentSchema=eight
+  --spring.datasource.username=postgres
+  --spring.datasource.password=postgres
+  --spring.jpa.defer-datasource-initialization=true
+  --spring.jpa.show-sql=false
+  --spring.jpa.hibernate.ddl-auto=create
+  --spring.jpa.properties.hibernate.default_schema=eight
+  --spring.sql.init.mode=always
+  --spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
+  --app.security.idp=keycloak
+  --app.security.cors.allowed-origins=http://localhost:3000
+"
+```
+
+### Gateway (Java - Spring Boot)
+
+```bash
+./mvnw clean spring-boot:run \
+-pl gateway \
+-Dspring-boot.run.arguments="
+  --spring.application.name=spring-nextjs-gateway 
+  --spring.security.oauth2.client.registration.relying-party.provider=identity-provider 
+  --spring.security.oauth2.client.registration.relying-party.client-id=spring-gateway 
+  --spring.security.oauth2.client.registration.relying-party.client-secret=ovJAxSmla3LXFiLfwi81H2IPDXKZjsCX 
+  --spring.security.oauth2.client.registration.relying-party.authorization-grant-type=client_credentials 
+  --spring.security.oauth2.client.registration.relying-party.scope=openid,profile,email 
+  --spring.security.oauth2.client.provider.identity-provider.issuer-uri=http://localhost:8000/realms/master 
+  --spring.cloud.gateway.routes[0].id=api_route 
+  --spring.cloud.gateway.routes[0].uri=http://localhost:8080 
+  --spring.cloud.gateway.routes[0].predicates[0]=Path=/api/** 
+  --spring.cloud.gateway.routes[0].filters[0]=RewritePath=/api/(?<segment>.*),/\${segment}
+"
+```
+
+### UI (TypeScript - Next.js, Auth.js)
 
 ```bash
 (cd ui_authjs; \
-export DATABASE_URL=${DATABASE_CONN_URL} \
-export KEYCLOAK_ISSUER=${OIDC_ISSUER_URI} \
-export KEYCLOAK_CLIENT_ID=${OIDC_CLIENT_ID} \
-export KEYCLOAK_CLIENT_SECRET=${OIDC_CLIENT_SECRET} \
-export NEXTAUTH_URL=${FRONTEND_URI} \
-export NEXTAUTH_SECRET=${NEXT_CRYPT_SECRET} \
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
+export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
+export KEYCLOAK_CLIENT_ID="spring-nextjs" \
+export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
+export NEXTAUTH_URL="http://localhost:3000" \
+export NEXTAUTH_SECRET="replace-with-a-strong-random-string" \
 export AUTH_TRUST_HOST=true \
-export NEXT_PUBLIC_API_BASE_URI=${RESOURCE_SERVER_URI} \
+export NEXT_PUBLIC_API_BASE_URI="http://localhost:8080" \
 npm install; \
 npm exec prisma migrate dev -- --name init; \
-npm run build && npm run start)
+npm run dev)
 ```
 
-Build frontend (oidc-client-ts authentication) module
+### UI (TypeScript - Next.js, oidc-client-ts)
 
 ```bash
-(cd ui;
+(cd ui_oidc-client-ts; \
 npm install;
-NEXT_PUBLIC_API_BASE_URI=${RESOURCE_SERVER_URI} \
-NEXT_PUBLIC_OIDC_AUTHORITY=${OIDC_ISSUER_URI} \
-NEXT_PUBLIC_OIDC_CLIENT_ID=${OIDC_CLIENT_ID} \
-NEXT_PUBLIC_OIDC_REDIRECT_URI=${OIDC_POST_SIGNIN_REDIRECT_URI} \
-NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=${OIDC_POST_SIGNOUT_URI} \
-npm run build)
-
-ls ui/out
+NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
+NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
+NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
+NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
+NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
+npm run dev)
 ```
 
 
@@ -93,116 +131,6 @@ Test frontend (Node.js) module with `watch` option
 (cd ui;
 npm install;
 npm run test-watch)
-```
-
-
-How to start for development
---------------------------------------------------------------------------------
-
-Start dependency servers
-
-```bash
-docker compose up
-```
-
-### Start API server module
-
-```bash
-./mvnw clean spring-boot:run \
--pl api \
--Dspring-boot.run.arguments="
-  --spring.datasource.url=jdbc:postgresql://localhost:5432/postgres?currentSchema=eight
-  --spring.datasource.username=postgres
-  --spring.datasource.password=postgres
-  --spring.jpa.defer-datasource-initialization=true
-  --spring.jpa.show-sql=false
-  --spring.jpa.hibernate.ddl-auto=create
-  --spring.jpa.properties.hibernate.default_schema=eight
-  --spring.sql.init.mode=always
-  --spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:8000/realms/master
-  --app.security.idp=keycloak
-  --app.security.cors.allowed-origins=http://localhost:3000
-"
-```
-
-### Start frontend (Auth.js = NextAuth authentication) module
-
-```bash
-(cd ui_authjs; \
-export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
-export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
-export KEYCLOAK_CLIENT_ID="spring-nextjs" \
-export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
-export NEXTAUTH_URL="http://localhost:3000" \
-export NEXTAUTH_SECRET="replace-with-a-strong-random-string" \
-export AUTH_TRUST_HOST=true \
-export NEXT_PUBLIC_API_BASE_URI="http://localhost:8080" \
-npm install; \
-npm exec prisma migrate dev -- --name init; \
-npm run build && npm run start)
-```
-
-with hot-reload
-
-```bash
-(cd ui_authjs; \
-export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=authjs" \
-export KEYCLOAK_ISSUER="http://localhost:8000/realms/master" \
-export KEYCLOAK_CLIENT_ID="spring-nextjs" \
-export KEYCLOAK_CLIENT_SECRET="Secret-1234567890-Secret" \
-export NEXTAUTH_URL="http://localhost:3000" \
-export NEXTAUTH_SECRET="replace-with-a-strong-random-string" \
-export AUTH_TRUST_HOST=true \
-export NEXT_PUBLIC_API_BASE_URI="http://localhost:8080" \
-npm install; \
-npm exec prisma migrate dev -- --name init; \
-npm run dev)
-```
-
-### Start frontend (oidc-client-ts authentication) module
-
-```bash
-(cd ui_oidc-client-ts; \
-npm install;
-NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
-NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
-NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
-NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
-NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
-npm run build && npm run serve)
-```
-
-with hot-reload
-
-```bash
-(cd ui_oidc-client-ts; \
-npm install;
-NEXT_PUBLIC_API_BASE_URI=http://localhost:8080 \
-NEXT_PUBLIC_OIDC_AUTHORITY=http://localhost:8000/realms/master \
-NEXT_PUBLIC_OIDC_CLIENT_ID=spring-nextjs \
-NEXT_PUBLIC_OIDC_REDIRECT_URI=http://localhost:3000 \
-NEXT_PUBLIC_OIDC_POST_LOGOUT_REDIRECT_URI=http://localhost:3000 \
-npm run dev)
-```
-
-### Start gateway server module
-
-```bash
-./mvnw clean spring-boot:run \
--pl gateway \
--Dspring-boot.run.arguments="
-  --spring.application.name=spring-nextjs-gateway 
-  --spring.security.oauth2.client.registration.relying-party.provider=identity-provider 
-  --spring.security.oauth2.client.registration.relying-party.client-id=spring-gateway 
-  --spring.security.oauth2.client.registration.relying-party.client-secret=ovJAxSmla3LXFiLfwi81H2IPDXKZjsCX 
-  --spring.security.oauth2.client.registration.relying-party.authorization-grant-type=client_credentials 
-  --spring.security.oauth2.client.registration.relying-party.scope=openid,profile,email 
-  --spring.security.oauth2.client.provider.identity-provider.issuer-uri=http://localhost:8000/realms/master 
-  --spring.cloud.gateway.routes[0].id=api_route 
-  --spring.cloud.gateway.routes[0].uri=http://localhost:8080 
-  --spring.cloud.gateway.routes[0].predicates[0]=Path=/api/** 
-  --spring.cloud.gateway.routes[0].filters[0]=RewritePath=/api/(?<segment>.*),/\${segment}
-"
 ```
 
 

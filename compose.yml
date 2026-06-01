@@ -1,25 +1,55 @@
 services:
-  #app-server:
-  #  build:
-  #    context: ./spring-nextjs-server
-  #    args:
-  #      JAR: ./target/spring-nextjs-server-*.jar
-  #  ports:
-  #    - "8080:8080"
-  #  environment:
-  #    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/spring_nextjs
-  #    SPRING_DATASOURCE_USERNAME: postgres
-  #    SPRING_DATASOURCE_PASSWORD: postgres
-  #    SPRING_JPA_DEFERDATASOURCEINITIALIZATION: true
-  #    SPRING_JPA_HIBERNATE_DDLAUTO: create
-  #    SPRING_JPA_SHOWSQL: false
-  #    SPRING_SQL_INIT_MODE: always # develop only
-  #    SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://localhost:8000/realms/master"
-  #    APP_SECURITY_CORS_ALLOWEDORIGINS: "http://localhost:3000"
+  eight-api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      args:
+        SRC: .
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/postgres?options=-c search_path=eight"
+      SPRING_DATASOURCE_USERNAME: "postgres"
+      SPRING_DATASOURCE_PASSWORD: "postgres"
+      SPRING_JPA_DEFERDATASOURCEINITIALIZATION: true
+      SPRING_JPA_HIBERNATE_DDLAUTO: "create"
+      SPRING_JPA_SHOWSQL: false
+      SPRING_SQL_INIT_MODE: always # develop only
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: "http://localhost:8000/realms/master"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
+      APP_SECURITY_IDP: "keycloak"
+      APP_SECURITY_CORS_ALLOWEDORIGINS: "http://localhost:3000"
+    extra_hosts:
+      - "localhost:host-gateway"
+    ports:
+      - "8080:8080"
+    depends_on:
+      keycloak-setup:
+        condition: service_healthy
+
+  eight-ui:
+    build:
+      context: .
+      dockerfile: docker/ui.Dockerfile
+      args:
+        SRC: ui_authjs
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/postgres?schema=authjs"
+      KEYCLOAK_ISSUER: "http://localhost:8000/realms/master"
+      KEYCLOAK_CLIENT_ID: "spring-nextjs"
+      KEYCLOAK_CLIENT_SECRET: "Secret-1234567890-Secret"
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_SECRET: "replace-with-a-strong-random-string"
+      AUTH_TRUST_HOST: true
+      NEXT_PUBLIC_API_BASE_URI: "http://localhost:8080"
+    extra_hosts:
+      - "localhost:host-gateway"
+    ports:
+      - "3000:3000"
+    depends_on:
+      keycloak-setup:
+        condition: service_healthy
+
   postgres:
     image: postgres
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -29,6 +59,8 @@ services:
     healthcheck:
       test: pg_isready -h 127.0.0.1 -U postgres -d postgres
       interval: 5s
+    ports:
+      - "5432:5432"
 
   dbgate:
     image: dbgate/dbgate
@@ -48,8 +80,6 @@ services:
 
   keycloak:
     image: keycloak/keycloak:26.3
-    ports:
-      - "8000:8080"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
@@ -62,19 +92,19 @@ services:
       KC_HTTP_MANAGEMENT_PORT: 9000
     command:
       - start-dev
+    ports:
+      - "8000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   keycloak-setup:
     image: everpeace/curl-jq
-    healthcheck:
-      test: test -e /tmp/READY || exit 1
-      interval: 10s
-      timeout: 10s
-      retries: 15
     environment:
       KEYCLOAK_URL_HEALTH: http://keycloak:9000/health
       KEYCLOAK_URL_BASE: http://keycloak:8080
       KEYCLOAK_REALM: master
-      KEYCLOAK_CLIENT_ID: spring-nextjs
+      KEYCLOAK_CLIENT_ID_API: spring-nextjs
       KEYCLOAK_CLIENT_SECRET: Secret-1234567890-Secret
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -82,3 +112,7 @@ services:
       - ./keycloak-setup.sh:/tmp/keycloak-setup.sh
       - ./src/main/resources/frontend/.env.development:/tmp/.env
     entrypoint: /bin/sh -c "/tmp/keycloak-setup.sh"
+    healthcheck:
+      test: ["CMD", "test", "-e", "/tmp/READY"]
+      interval: 5s
+      retries: 60
