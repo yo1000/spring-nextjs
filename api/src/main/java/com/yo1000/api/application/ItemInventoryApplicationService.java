@@ -1,8 +1,5 @@
 package com.yo1000.api.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.yo1000.api.application.json.ValidatableObjectReader;
 import com.yo1000.api.domain.model.ItemInventory;
 import com.yo1000.api.domain.repository.ItemInventoryRepository;
@@ -14,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
 
 import java.util.Objects;
 
@@ -80,43 +79,35 @@ public class ItemInventoryApplicationService {
     public ItemInventory updateDiff(Integer id, String itemInventoryDiffJson) {
         ItemInventory existedItemInventory = lookup(id);
 
-        try {
-            ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedItemInventory));
-            ItemInventory updateItemInventory = reader.readValue(itemInventoryDiffJson);
+        ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedItemInventory));
+        ItemInventory updateItemInventory = reader.readValue(itemInventoryDiffJson);
 
-            if (!Objects.equals(existedItemInventory.getId(), updateItemInventory.getId())) {
-                throw new InvalidDataAccessResourceUsageException("ItemInventory id is invalid: " + updateItemInventory.getId());
-            }
-
-            if (updateItemInventory.getItem() == null) {
-                throw new IllegalArgumentException("itemId can not be null");
-            }
-
-            return itemInventoryRepository.save(existedItemInventory);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        if (!Objects.equals(existedItemInventory.getId(), updateItemInventory.getId())) {
+            throw new InvalidDataAccessResourceUsageException("ItemInventory id is invalid: " + updateItemInventory.getId());
         }
+
+        if (updateItemInventory.getItem() == null) {
+            throw new IllegalArgumentException("itemId can not be null");
+        }
+
+        return itemInventoryRepository.save(existedItemInventory);
     }
 
     @PreAuthorize("hasAnyAuthority({'admin', 'spring-nextjs.itemInventory:write'})")
     public ItemInventory updateDiffByItemId(Integer itemId, String itemInventoryDiffJson) {
         ItemInventory existedItemInventory = lookupByItemId(itemId);
 
-        try {
-            ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedItemInventory));
-            ItemInventory updateItemInventory = reader.readValue(itemInventoryDiffJson);
+        ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedItemInventory));
+        ItemInventory updateItemInventory = reader.readValue(itemInventoryDiffJson);
 
-            if (!Objects.equals(existedItemInventory.getId(), updateItemInventory.getId())) {
-                throw new InvalidDataAccessResourceUsageException("ItemInventory id is invalid: " + updateItemInventory.getId());
-            }
-
-            if (updateItemInventory.getItem() == null) {
-                throw new IllegalArgumentException("itemId can not be null");
-            }
-
-            return itemInventoryRepository.save(existedItemInventory);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        if (!Objects.equals(existedItemInventory.getId(), updateItemInventory.getId())) {
+            throw new InvalidDataAccessResourceUsageException("ItemInventory id is invalid: " + updateItemInventory.getId());
         }
+
+        if (updateItemInventory.getItem() == null) {
+            throw new IllegalArgumentException("itemId can not be null");
+        }
+
+        return itemInventoryRepository.save(existedItemInventory);
     }
 }

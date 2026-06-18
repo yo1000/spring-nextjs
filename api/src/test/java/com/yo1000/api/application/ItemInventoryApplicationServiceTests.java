@@ -1,6 +1,5 @@
 package com.yo1000.api.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yo1000.api.domain.model.Item;
 import com.yo1000.api.domain.model.ItemInventory;
 import com.yo1000.api.domain.repository.ItemInventoryRepository;
@@ -11,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Optional;

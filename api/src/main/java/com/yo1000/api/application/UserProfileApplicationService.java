@@ -1,8 +1,5 @@
 package com.yo1000.api.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.yo1000.api.application.json.ValidatableObjectReader;
 import com.yo1000.api.domain.model.UserProfile;
 import com.yo1000.api.domain.repository.UserProfileRepository;
@@ -16,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
 
 import java.util.Objects;
 
@@ -67,25 +66,21 @@ public class UserProfileApplicationService {
 
     // authentication: UserProfiledAuthenticationToken
     // principal: UserProfile
-    @PreAuthorize("hasAnyAuthority({'admin'}) || principal.id == 1 || #username == authentication.name")
+    @PreAuthorize("hasAnyAuthority({'admin'}) || authentication.name == 'admin' || authentication.name == #username")
     public UserProfile updateDiffByUsername(String username, String userProfileDiffJson) {
         UserProfile existedUserProfile = lookupByUsername(username);
 
-        try {
-            ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedUserProfile));
-            UserProfile updateUserProfile = reader.readValue(userProfileDiffJson);
+        ObjectReader reader = new ValidatableObjectReader(objectMapper.readerForUpdating(existedUserProfile));
+        UserProfile updateUserProfile = reader.readValue(userProfileDiffJson);
 
-            if (!Objects.equals(existedUserProfile.getId(), updateUserProfile.getId())) {
-                throw new InvalidDataAccessResourceUsageException("User id is invalid: " + updateUserProfile.getId());
-            }
-
-            if (updateUserProfile.getUsername() == null) {
-                throw new IllegalArgumentException("Username can not be null");
-            }
-
-            return userProfileRepository.save(existedUserProfile);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        if (!Objects.equals(existedUserProfile.getId(), updateUserProfile.getId())) {
+            throw new InvalidDataAccessResourceUsageException("User id is invalid: " + updateUserProfile.getId());
         }
+
+        if (updateUserProfile.getUsername() == null) {
+            throw new IllegalArgumentException("Username can not be null");
+        }
+
+        return userProfileRepository.save(existedUserProfile);
     }
 }

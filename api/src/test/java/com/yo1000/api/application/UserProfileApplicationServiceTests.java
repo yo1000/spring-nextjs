@@ -1,12 +1,12 @@
 package com.yo1000.api.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yo1000.api.domain.model.UserProfile;
 import com.yo1000.api.domain.repository.UserProfileRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.data.domain.*;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Optional;

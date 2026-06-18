@@ -7,7 +7,7 @@ Spring Boot x Next.js demo
 Requirements
 --------------------------------------------------------------------------------
 
-- Java 21
+- Java 25
 - Node.js 22
 - Docker
 

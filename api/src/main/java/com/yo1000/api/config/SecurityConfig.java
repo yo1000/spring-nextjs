@@ -46,7 +46,7 @@ public class SecurityConfig {
             HttpSecurity httpSecurity,
             ApplicationProperties appProps,
             UserProfileRepository userProfileRepos
-    ) throws Exception {
+    ) {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults());
